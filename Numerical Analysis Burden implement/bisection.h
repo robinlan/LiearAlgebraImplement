@@ -51,6 +51,7 @@ float bisectionSearchForOneRoot(FindOneRootInput _input){
 		
 		/*Check if current error is below to the tolerance error*/
 		if(FofRoot == 0.0 || (endPoint-startPoint)/2.0 < tolError){
+			printf("Total iteration: %d\n",i);
 			return root;
 		}
 		
