@@ -6,21 +6,32 @@
 
 #include <tchar.h>
 #include <string>
+#include <vector>
+#include "math_function.h"
+#include "type_convert.h"
 #include "win_widget.h"
 
-#define IDC_MAIN_BUTTON			101		// Button identifier
+#define IDC_CALC_BUTTON			101		// Calculate button identifier
 #define IDC_MAIN_EDITBOX		102		// Edit box identifier
 #define IDC_POWER_BUTTON		103		// Power function setting button
 #define IDC_POWERCOEFF_EDITBOX	104		// Power coefficient edit box
 #define IDC_POWERPOWER_EDITBOX	105		// Power power edit box
+#define IDC_CLEAR_BUTTON		106		// Clear button identifier
+
+#define MAXNUM_PER_FUNC			50		// Store the maximum number of function per type
 
 using namespace std;
 
 /***********************
 ** Global Declaration **
 ************************/
-HWND hEdit1;
-HWND hEdit2;
+HWND hEdit1; 										 //Store coefficient
+HWND hEdit2; 										 //Store power
+
+vector<MathFunction*> mathFuncVector; 				 //Store the address of function objects
+
+int powerFuncNum;									 //Store power function number
+PowerMathFunction powerFuncArray[MAXNUM_PER_FUNC];   //Store power function objects
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
@@ -97,9 +108,10 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 	HDC hdc;
 	PAINTSTRUCT ps;
 	
-	switch (message)                  /* handle the messages */
-    {
+	switch (message) {                 /* handle the messages */
         case WM_CREATE: {
+			
+			powerFuncNum = 0;
 			
 			WinButton button1("POWER",50,100,100,24,hwnd,(HMENU)IDC_POWER_BUTTON);
 			HWND hbutton = button1.getButton();
@@ -111,6 +123,12 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 			WinEditbox editbox2("",290,100,100,24,hwnd,(HMENU)IDC_POWERPOWER_EDITBOX);
 			editbox2.setEditboxText((LPARAM)"power");
 			hEdit2 = editbox2.getEditbox();
+			
+			WinButton button2("CALC",50,150,100,24,hwnd,(HMENU)IDC_CALC_BUTTON);
+			HWND hbutton2 = button2.getButton();
+			
+			WinButton button3("CLEAR",170,150,100,24,hwnd,(HMENU)IDC_CLEAR_BUTTON);
+			HWND hbutton3 = button3.getButton();
 			
 			break;
 		}
@@ -134,11 +152,47 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 						sizeof(buffer)/sizeof(buffer[0]),
 						reinterpret_cast<LPARAM>(buffer));
 					string powerStr(buffer);
+					
+					PowerMathFunction func(str2float(coeffStr));
+					func.setPower(str2float(powerStr));
+					powerFuncArray[powerFuncNum] = func;
+					mathFuncVector.push_back(&(powerFuncArray[powerFuncNum]));
+					powerFuncNum = powerFuncNum + 1;
 
 					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_CALC_BUTTON: {
+					
+					string tmpMessage;
+					
+					float result = 0.0;
+					for(int i=0;i<mathFuncVector.size();i++){
+						result = result + mathFuncVector[i]->calculateResult(2.0);
+					}
+					tmpMessage = "f(2) is: "+float2str(result);
+					MessageBox(NULL,
+						tmpMessage.c_str(),
+						"Information",
+						MB_ICONINFORMATION);
+					
+					break;
 					
 				}
-				break;
+				
+				case IDC_CLEAR_BUTTON: {
+					
+					powerFuncNum = 0;
+					
+					while(!mathFuncVector.empty()){
+						mathFuncVector.pop_back();
+					}
+					
+					break;
+				}
 				
 			}
 			
@@ -148,8 +202,13 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 		case WM_PAINT: {
 			
 			hdc = BeginPaint(hwnd,&ps);
-			TextOut (hdc, 150, 20,"Hello world!",12) ;
-			EndPaint (hwnd, &ps) ;
+			if(!mathFuncVector.empty()){
+				string tmp = "Coefficient: "+float2str((mathFuncVector.back())->getCoefficient());
+				TextOut(hdc,50,70,tmp.c_str(),tmp.length());
+			} else{
+				TextOut(hdc, 50, 70,"Please input some function here.",32) ;
+			}
+			EndPaint (hwnd,&ps) ;
 			
 			break;
 			

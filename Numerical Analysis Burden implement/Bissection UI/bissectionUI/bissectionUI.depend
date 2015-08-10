@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1439220994 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\main.cpp
+	<tchar.h>
+	<string>
+	<vector>
+	"math_function.h"
+	"type_convert.h"
+	"win_widget.h"
+
+1439207161 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\win_widget.h
+	<windows.h>
+	<string>
+
+1439220506 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\math_function.h
+	<iostream>
+	<vector>
+	<math.h>
+
+1439211789 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\type_convert.h
+	<sstream>
+	<ostream>
+	<string>
+
