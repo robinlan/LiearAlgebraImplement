@@ -70,6 +70,9 @@ Example usage in WM_CREATE:
 	WinEditbox editbox1("",50,100,200,100,hwnd,(HMENU)IDC_MAIN_EDITBOX);
 	editbox1.setEditboxText((LPARAM)"Input sth here....");
 	HWND hEdit = editbox1.getEditbox();
+or to get the content:
+	WinEditbox editbox1(hEdit1);
+	string coeffStr = editbox1.getEditboxContent();
 	
 ***********************************************************************/
 class WinEditbox{
@@ -77,6 +80,10 @@ class WinEditbox{
 		HWND winEditbox; //The real edit box object
 	public:
 		WinEditbox(){}
+		/*Construct object with living HWND object*/
+		WinEditbox(HWND _winEditbox){
+			winEditbox = _winEditbox;
+		}
 		/*Create an edit box with text, x, y, width, height, father window object*/
 		WinEditbox(LPCTSTR _text,        //Text content on the button
 				   int _x,
@@ -128,8 +135,30 @@ class WinEditbox{
 				_text);
 		}
 		
+		/*Access edit box content*/
+		string getEditboxContent(){
+			
+			char tmpBuffer[256];
+			SendMessage(winEditbox,
+				WM_GETTEXT,
+				sizeof(tmpBuffer)/sizeof(tmpBuffer[0]),
+				reinterpret_cast<LPARAM>(tmpBuffer));
+				
+			string tmpStr(tmpBuffer);
+			return tmpStr;
+			
+		}
+		
 		/*Access the edit box object*/
 		HWND getEditbox(){
 			return winEditbox;
 		}
 };
+
+/*Message box*/
+void showMessage(string _message){
+	MessageBox(NULL,
+		_message.c_str(),
+		"Information",
+		MB_ICONINFORMATION);
+}
