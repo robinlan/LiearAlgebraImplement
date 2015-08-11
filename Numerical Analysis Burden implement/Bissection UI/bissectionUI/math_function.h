@@ -1,11 +1,14 @@
-#include<iostream>
-#include<vector>
-#include<math.h>
+#include <iostream>
+#include <vector>
+#include <math.h>
+#include "type_convert.h"
 using namespace std;
 
 class MathFunction{
 	private:
-		float coefficient; //Coefficient of this item
+		string type;       				  //Store the type name of the function
+		float coefficient; 				  //Coefficient of this item
+		vector<MathFunction*> funcVector; //Two functions will multiply each other
 	public:
 		MathFunction(){}
 		/*Construct object with coefficient*/
@@ -14,13 +17,29 @@ class MathFunction{
 		}
 		/*Use x to calculate f(x)*/
 		virtual float calculateResult(float _x) = 0;
+		/*Access the type name*/
+		string getType(){
+			return type;
+		}
 		/*Access the coefficient*/
 		float getCoefficient(){
 			return coefficient;
 		}
+		/*Access the funcVector*/
+		vector<MathFunction*> getFuncVector(){
+			return funcVector;
+		}
+		/*Allow setting the type name*/
+		void setType(string _type){
+			type = _type;
+		}
 		/*Allow setting the coefficient*/
 		void setCoefficient(float _coeff){
 			coefficient = _coeff;
+		}
+		/*Store one function*/
+		void functionStore(MathFunction* _func){
+			funcVector.push_back(_func);
 		}
 		
 };
@@ -42,7 +61,10 @@ class PowerMathFunction: public MathFunction{
 		}
 		/*Set the power*/
 		void setPower(int _power){
+			
 			power = _power;
+			setType(float2str(getCoefficient())+"*power(x,"+int2str(_power)+")");
+			
 		}
 		/*Use x to calculate f(x)*/
 		float calculateResult(float _x){
@@ -70,7 +92,10 @@ class ServeAsPowerMathFunction: public MathFunction{
 		}
 		/*Set the bottom number*/
 		void setBottomNum(float _bottomNum){
+			
 			bottomNum = _bottomNum;
+			setType(float2str(getCoefficient())+"*serve_as_power("+float2str(_bottomNum)+",x)");
+			
 		}
 		/*Calculate result with x and power*/
 		float calculateResult(float _x){
@@ -92,7 +117,10 @@ class SquareRootMathFunction: public MathFunction{
 		SquareRootMathFunction(){}
 		/*Construct object with coefficient*/
 		SquareRootMathFunction(float _coeff){
+			
 			setCoefficient(_coeff);
+			setType(float2str(_coeff)+"*square_root(x)");
+			
 		}
 		/*Calculate result with x and power*/
 		float calculateResult(float _x){
@@ -114,7 +142,10 @@ class SinMathFunction: public MathFunction{
 		SinMathFunction(){}
 		/*Construct object with coefficient*/
 		SinMathFunction(float _coeff){
+			
 			setCoefficient(_coeff);
+			setType(float2str(_coeff)+"*sin(x)");
+			
 		}
 		/*Calculate result with x and power*/
 		float calculateResult(float _x){
@@ -136,7 +167,10 @@ class CosMathFunction: public MathFunction{
 		CosMathFunction(){}
 		/*Construct object with coefficient*/
 		CosMathFunction(float _coeff){
+			
 			setCoefficient(_coeff);
+			setType(float2str(_coeff)+"*cos(x)");
+			
 		}
 		/*Calculate result with x and power*/
 		float calculateResult(float _x){
@@ -158,7 +192,10 @@ class ExpMathFunction: public MathFunction{
 		ExpMathFunction(){}
 		/*Construct object with coefficient*/
 		ExpMathFunction(float _coeff){
+			
 			setCoefficient(_coeff);
+			setType(float2str(_coeff)+"*exp(x)");
+			
 		}
 		/*Calculate result with x and power*/
 		float calculateResult(float _x){
@@ -185,24 +222,20 @@ Example usage:
 	
 **********************************************/
 class MultiplyTwoMathFunction: public MathFunction{
-	private:
-		vector<MathFunction*> funcVector; //Two functions will multiply each other
 	public:
 		MultiplyTwoMathFunction(){}
 		/*Construct object with coefficient*/
 		MultiplyTwoMathFunction(float _coeff){
-			setCoefficient(_coeff);
-		}
-		/*Store one function*/
-		void functionStore(MathFunction* _func){
-			funcVector.push_back(_func);
+			setCoefficient(_coeff);			
+			setType("");
 		}
 		/*Calculate result with function vector*/
 		float calculateResult(float _x){
 			
 			float tmpResult = 1.0;
-			for(int i=0;i<funcVector.size();i++){
-				tmpResult = tmpResult * funcVector[i]->calculateResult(_x);
+			vector<MathFunction*> _funcVector = getFuncVector();
+			for(int i=0;i<_funcVector.size();i++){
+				tmpResult = tmpResult * _funcVector[i]->calculateResult(_x);
 			}
 			tmpResult = getCoefficient() * tmpResult;
 			return tmpResult;
@@ -228,24 +261,22 @@ Example usage:
 **********************************************/
 
 class CalculateAnotherFunctionFirstMathFunction: public MathFunction{
-	private:
-		vector<MathFunction*> funcVector; //Calculate the first, and send the result to the second
 	public:
 		CalculateAnotherFunctionFirstMathFunction(){}
 		/*Construct object with coefficient*/
 		CalculateAnotherFunctionFirstMathFunction(float _coeff){
+			
 			setCoefficient(_coeff);
-		}
-		/*Store one function*/
-		void functionStore(MathFunction* _func){
-			funcVector.push_back(_func);
+			setType("");
+			
 		}
 		/*Calculate result with function vector*/
 		float calculateResult(float _x){
 			
-			float result = funcVector[0]->calculateResult(_x);
-			for(int i=0;i<funcVector.size();i++){
-				result = funcVector[i]->calculateResult(result);
+			vector<MathFunction*> _funcVector = getFuncVector();
+			float result = _funcVector[_funcVector.size()-1]->calculateResult(_x);
+			for(int i=_funcVector.size()-2;i>=0;i--){
+				result = _funcVector[i]->calculateResult(result);
 			}
 			result = getCoefficient() * result;
 			return result;

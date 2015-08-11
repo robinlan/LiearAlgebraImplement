@@ -21,3 +21,28 @@
 	<ostream>
 	<string>
 
+1439275818 source:d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\main.cpp
+	<tchar.h>
+	<string>
+	"numeric_algorithms.h"
+
+1439258686 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\numeric_algorithms.h
+	<vector>
+	"math_function.h"
+	"win_widget.h"
+
+1439276573 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\math_function.h
+	<iostream>
+	<vector>
+	<math.h>
+	"type_convert.h"
+
+1439256025 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\type_convert.h
+	<sstream>
+	<ostream>
+	<string>
+
+1439256025 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\bissectionui\win_widget.h
+	<windows.h>
+	<string>
+
