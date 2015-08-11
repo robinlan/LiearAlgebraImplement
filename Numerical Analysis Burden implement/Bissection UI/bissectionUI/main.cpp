@@ -28,6 +28,13 @@
 #define IDC_COS_EDITBOX					115		// Cos coefficient edit box
 #define IDC_EXP_BUTTON					116		// Exp function setting button
 #define IDC_EXP_EDITBOX					117		// Exp coefficient edit box
+#define IDC_X_BUTTON					118		// x button identifier
+#define IDC_X_EDITBOX					119		// x edit box
+#define IDC_FINDROOT_BUTTON				120		// Find root button identifier
+#define IDC_FINDROOTSTARTVAL_EDITBOX	121		// Find root start value edit box
+#define IDC_FINDROOTENDVAL_EDITBOX		122		// Find root END value edit box
+#define IDC_FINDROOTTOLERROR_EDITBOX	123		// Find root tolerance value edit box
+#define IDC_FINDROOTMAXITER_EDITBOX		124		// Find root maximum iteration edit box
 
 #define MAXNUM_PER_FUNC			50		// Store the maximum number of function per type
 
@@ -36,6 +43,8 @@ using namespace std;
 /***********************
 ** Global Declaration **
 ************************/
+HWND hEditX; 										 //Store x value
+
 HWND hEdit1; 										 //Store power coefficient
 HWND hEdit2; 										 //Store power power
 HWND hEdit3; 										 //Store serveaspower coefficient
@@ -45,10 +54,31 @@ HWND hEdit6;										 //Store sin coefficient
 HWND hEdit7;										 //Store cos coefficient
 HWND hEdit8;										 //Store exp coefficient
 
+HWND hEdit9; 										 //Store find root start value
+HWND hEdit10; 										 //Store find root end value
+HWND hEdit11; 										 //Store find root tolerance error
+HWND hEdit12; 										 //Store find root maximum iteration
+
+float x;											 //Store value of x
+float startVal;										 //Store value of start value
+float endVal;										 //Store value of end value
+float tolError;										 //Store value of tolerance error
+int maxIter;										 //Store value of maximum iteration
+
 vector<MathFunction*> mathFuncVector; 				 //Store the address of function objects
 
-int powerFuncNum;									 //Store power function number
-PowerMathFunction powerFuncArray[MAXNUM_PER_FUNC];   //Store power function objects
+int powerFuncNum;									 				//Store power function number
+PowerMathFunction powerFuncArray[MAXNUM_PER_FUNC];   				//Store power function objects
+int serveAsPowerFuncNum;									 		//Store serveAsPower function number
+ServeAsPowerMathFunction serveAsPowerFuncArray[MAXNUM_PER_FUNC];    //Store serveAsPower function objects
+int squareRootFuncNum;									 			//Store sqrt function number
+SquareRootMathFunction squareRootFuncArray[MAXNUM_PER_FUNC];   		//Store sqrt function objects
+int sinFuncNum;										 				//Store sin function number
+SinMathFunction sinFuncArray[MAXNUM_PER_FUNC];   					//Store sin function objects
+int cosFuncNum;										 				//Store cos function number
+CosMathFunction cosFuncArray[MAXNUM_PER_FUNC];   					//Store cos function objects
+int expFuncNum;										 				//Store exp function number
+ExpMathFunction expFuncArray[MAXNUM_PER_FUNC];   					//Store exp function objects
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
@@ -89,12 +119,12 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     hwnd = CreateWindowEx (
            0,                   /* Extended possibilites for variation */
            szClassName,         /* Classname */
-           _T("Code::Blocks Template Windows App"),       /* Title Text */
+           _T("Function Calculation Windows App"),       /* Title Text */
            WS_OVERLAPPEDWINDOW, /* default window */
            CW_USEDEFAULT,       /* Windows decides the position */
            CW_USEDEFAULT,       /* where the window ends up on the screen */
-           544,                 /* The programs width */
-           375,                 /* and height in pixels */
+           644,                 /* The programs width */
+           525,                 /* and height in pixels */
            HWND_DESKTOP,        /* The window is a child-window to desktop */
            NULL,                /* No menu */
            hThisInstance,       /* Program Instance handler */
@@ -129,6 +159,17 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         case WM_CREATE: {
 			
 			powerFuncNum = 0;
+			serveAsPowerFuncNum = 0;
+			squareRootFuncNum = 0;
+			sinFuncNum = 0;
+			cosFuncNum = 0;
+			expFuncNum = 0;
+			
+			x = 0.0;
+			startVal = 0.0;
+			endVal = 0.0;
+			tolError = 0.0;
+			maxIter = 0;
 			
 			WinButton button1("POWER",50,50,100,24,hwnd,(HMENU)IDC_POWER_BUTTON);
 			HWND hbutton = button1.getButton();
@@ -164,12 +205,14 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 			hEdit5 = editbox5.getEditbox();
 			
 			
+			
 			WinButton button6("SIN",50,170,100,24,hwnd,(HMENU)IDC_SIN_BUTTON);
 			HWND hbutton6 = button6.getButton();
 			
 			WinEditbox editbox6("",170,170,100,24,hwnd,(HMENU)IDC_SIN_EDITBOX);
 			editbox6.setEditboxText((LPARAM)"coeff");
 			hEdit6 = editbox6.getEditbox();
+			
 			
 			
 			WinButton button7("COS",50,210,100,24,hwnd,(HMENU)IDC_COS_BUTTON);
@@ -180,7 +223,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 			hEdit7 = editbox7.getEditbox();
 			
 			
-			WinButton button8("SIN",50,250,100,24,hwnd,(HMENU)IDC_EXP_BUTTON);
+			
+			WinButton button8("EXP",50,250,100,24,hwnd,(HMENU)IDC_EXP_BUTTON);
 			HWND hbutton8 = button8.getButton();
 			
 			WinEditbox editbox8("",170,250,100,24,hwnd,(HMENU)IDC_EXP_EDITBOX);
@@ -188,11 +232,44 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 			hEdit8 = editbox8.getEditbox();
 			
 			
-			WinButton button2("CALC",50,290,100,24,hwnd,(HMENU)IDC_CALC_BUTTON);
+			
+			WinButton buttonX("X",50,330,100,24,hwnd,(HMENU)IDC_X_BUTTON);
+			HWND hbuttonX = buttonX.getButton();
+			
+			WinEditbox editboxX("",170,330,100,24,hwnd,(HMENU)IDC_X_EDITBOX);
+			editboxX.setEditboxText((LPARAM)"X");
+			hEditX = editboxX.getEditbox();
+			
+			
+			
+			WinButton button9("findRoot",50,410,100,24,hwnd,(HMENU)IDC_FINDROOT_BUTTON);
+			HWND hbutton9 = button9.getButton();
+			
+			WinEditbox editbox9("",170,410,100,24,hwnd,(HMENU)IDC_FINDROOTSTARTVAL_EDITBOX);
+			editbox9.setEditboxText((LPARAM)"startVal");
+			hEdit9 = editbox9.getEditbox();
+			
+			WinEditbox editbox10("",290,410,100,24,hwnd,(HMENU)IDC_FINDROOTENDVAL_EDITBOX);
+			editbox10.setEditboxText((LPARAM)"endVal");
+			hEdit10 = editbox10.getEditbox();
+			
+			WinEditbox editbox11("",410,410,100,24,hwnd,(HMENU)IDC_FINDROOTTOLERROR_EDITBOX);
+			editbox11.setEditboxText((LPARAM)"tolError");
+			hEdit11 = editbox11.getEditbox();
+			
+			WinEditbox editbox12("",530,410,100,24,hwnd,(HMENU)IDC_FINDROOTMAXITER_EDITBOX);
+			editbox12.setEditboxText((LPARAM)"maxIter");
+			hEdit12 = editbox12.getEditbox();
+			
+			
+			
+			WinButton button2("CALC",50,450,100,24,hwnd,(HMENU)IDC_CALC_BUTTON);
 			HWND hbutton2 = button2.getButton();
 			
-			WinButton button3("CLEAR",170,290,100,24,hwnd,(HMENU)IDC_CLEAR_BUTTON);
+			WinButton button3("CLEAR",170,450,100,24,hwnd,(HMENU)IDC_CLEAR_BUTTON);
 			HWND hbutton3 = button3.getButton();
+			
+			
 			
 			break;
 		}
@@ -220,15 +297,133 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 				
 				}
 				
+				case IDC_SERVEASPOWER_BUTTON: {
+					
+					WinEditbox editbox1(hEdit3);
+					string coeffStr = editbox1.getEditboxContent();
+					WinEditbox editbox2(hEdit4);
+					string bottomNumStr = editbox2.getEditboxContent();
+					
+					ServeAsPowerMathFunction func(str2float(coeffStr));
+					func.setBottomNum(str2float(bottomNumStr));
+					serveAsPowerFuncArray[serveAsPowerFuncNum] = func;
+					mathFuncVector.push_back(&(serveAsPowerFuncArray[serveAsPowerFuncNum]));
+					serveAsPowerFuncNum = serveAsPowerFuncNum + 1;
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_SQUAREROOT_BUTTON: {
+					
+					WinEditbox editbox1(hEdit5);
+					string coeffStr = editbox1.getEditboxContent();
+					
+					SquareRootMathFunction func(str2float(coeffStr));
+					squareRootFuncArray[squareRootFuncNum] = func;
+					mathFuncVector.push_back(&(squareRootFuncArray[squareRootFuncNum]));
+					squareRootFuncNum = squareRootFuncNum + 1;
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_SIN_BUTTON: {
+					
+					WinEditbox editbox1(hEdit6);
+					string coeffStr = editbox1.getEditboxContent();
+					
+					SinMathFunction func(str2float(coeffStr));
+					sinFuncArray[sinFuncNum] = func;
+					mathFuncVector.push_back(&(sinFuncArray[sinFuncNum]));
+					sinFuncNum = sinFuncNum + 1;
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_COS_BUTTON: {
+					
+					WinEditbox editbox1(hEdit7);
+					string coeffStr = editbox1.getEditboxContent();
+					
+					CosMathFunction func(str2float(coeffStr));
+					cosFuncArray[cosFuncNum] = func;
+					mathFuncVector.push_back(&(cosFuncArray[cosFuncNum]));
+					cosFuncNum = cosFuncNum + 1;
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_EXP_BUTTON: {
+					
+					WinEditbox editbox1(hEdit8);
+					string coeffStr = editbox1.getEditboxContent();
+					
+					ExpMathFunction func(str2float(coeffStr));
+					expFuncArray[expFuncNum] = func;
+					mathFuncVector.push_back(&(expFuncArray[expFuncNum]));
+					expFuncNum = expFuncNum + 1;
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_X_BUTTON: {
+					
+					WinEditbox editbox1(hEditX);
+					string xStr = editbox1.getEditboxContent();
+					
+					x = str2float(xStr);
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
+				case IDC_FINDROOT_BUTTON: {
+					
+					WinEditbox editbox1(hEdit9);
+					string startValStr = editbox1.getEditboxContent();
+					WinEditbox editbox2(hEdit10);
+					string endValStr = editbox2.getEditboxContent();
+					WinEditbox editbox3(hEdit11);
+					string tolErrorStr = editbox3.getEditboxContent();
+					WinEditbox editbox4(hEdit12);
+					string maxIterStr = editbox4.getEditboxContent();
+					
+					startVal = str2float(startValStr);
+					endVal = str2float(endValStr);
+					tolError = str2float(tolErrorStr);
+					maxIter = str2int(maxIterStr);
+
+					InvalidateRect(hwnd,NULL,TRUE);
+				
+					break;
+				
+				}
+				
 				case IDC_CALC_BUTTON: {
 					
 					string tmpMessage;
 					
 					float result = 0.0;
 					for(int i=0;i<mathFuncVector.size();i++){
-						result = result + mathFuncVector[i]->calculateResult(2.0);
+						result = result + mathFuncVector[i]->calculateResult(x);
 					}
-					tmpMessage = "f(2) is: "+float2str(result);
+					tmpMessage = "f("+float2str(x)+") is: "+float2str(result);
 					
 					showMessage(tmpMessage);
 					
@@ -239,13 +434,45 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 				case IDC_CLEAR_BUTTON: {
 					
 					powerFuncNum = 0;
+					serveAsPowerFuncNum = 0;
+					squareRootFuncNum = 0;
+					sinFuncNum = 0;
+					cosFuncNum = 0;
+					expFuncNum = 0;
 					mathFuncVector.clear();
 					
-					WinEditbox editbox1(hEdit1);
-					editbox1.setEditboxText((LPARAM)"");	
+					x=0.0;
+					startVal = 0.0;
+					endVal = 0.0;
+					tolError = 0.0;
+					maxIter = 0;
 					
+					WinEditbox editbox1(hEdit1);
+					editbox1.setEditboxText((LPARAM)"coeff");	
 					WinEditbox editbox2(hEdit2);
-					editbox2.setEditboxText((LPARAM)"");
+					editbox2.setEditboxText((LPARAM)"power");
+					WinEditbox editbox3(hEdit3);
+					editbox3.setEditboxText((LPARAM)"coeff");
+					WinEditbox editbox4(hEdit4);
+					editbox4.setEditboxText((LPARAM)"butnum");
+					WinEditbox editbox5(hEdit5);
+					editbox5.setEditboxText((LPARAM)"coeff");
+					WinEditbox editbox6(hEdit6);
+					editbox6.setEditboxText((LPARAM)"coeff");
+					WinEditbox editbox7(hEdit7);
+					editbox7.setEditboxText((LPARAM)"coeff");
+					WinEditbox editbox8(hEdit8);
+					editbox8.setEditboxText((LPARAM)"coeff");
+					WinEditbox editboxX(hEditX);
+					editboxX.setEditboxText((LPARAM)"X");	
+					WinEditbox editbox9(hEdit9);
+					editbox9.setEditboxText((LPARAM)"startVal");
+					WinEditbox editbox10(hEdit10);
+					editbox10.setEditboxText((LPARAM)"endVal");
+					WinEditbox editbox11(hEdit11);
+					editbox11.setEditboxText((LPARAM)"tolError");
+					WinEditbox editbox12(hEdit12);
+					editbox12.setEditboxText((LPARAM)"maxIter");
 					
 					InvalidateRect(hwnd,NULL,TRUE);
 					
@@ -263,9 +490,23 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 			
 			if(!mathFuncVector.empty()){
 				string tmp = "Coefficient: "+float2str((mathFuncVector.back())->getCoefficient());
-				TextOut(hdc,50,10,tmp.c_str(),tmp.length());
+				TextOut(hdc,50,20,tmp.c_str(),tmp.length());
 			} else{
-				TextOut(hdc,50,10,"Please input some function here.",32) ;
+				TextOut(hdc,50,20,"Please input some function here.",32) ;
+			}
+			
+			if(x != 0.0){
+				string tmp = "X: "+float2str((x));
+				TextOut(hdc,50,300,tmp.c_str(),tmp.length());
+			} else{
+				TextOut(hdc,50,300,"Please input value of x here.",29) ;
+			}
+			
+			if(tolError != 0.0){
+				string tmp = "Input: "+float2str((startVal))+", "+float2str((endVal))+", "+float2str((tolError))+", "+int2str((maxIter));
+				TextOut(hdc,50,380,tmp.c_str(),tmp.length());
+			} else{
+				TextOut(hdc,50,380,"Please input value to find root here.",37) ;
 			}
 			
 			EndPaint (hwnd,&ps) ;
@@ -277,7 +518,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 		case WM_DESTROY:
             PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
             break;
-        default:                      /* for messages that we don't deal with */
+        default:                       /* for messages that we don't deal with */
             return DefWindowProc (hwnd, message, wParam, lParam);
     }
 
