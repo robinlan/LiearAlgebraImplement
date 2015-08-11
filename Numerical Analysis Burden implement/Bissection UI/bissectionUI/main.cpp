@@ -91,7 +91,7 @@ CalculateAnotherFunctionFirstMathFunction nestedFuncArray[MAXNUM_PER_FUNC]; //St
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
 /*  Make the class name into a global variable  */
-TCHAR szClassName[ ] = _T("CodeBlocksWindowsApp");
+TCHAR szClassName[ ] = _T("BisectionRootFindingApp");
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
                      HINSTANCE hPrevInstance,
@@ -124,26 +124,25 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
     /* The class is registered, let's create the program*/
     hwnd = CreateWindowEx (
-           0,                   /* Extended possibilites for variation */
-           szClassName,         /* Classname */
-           _T("Function Calculation Windows App"),       /* Title Text */
-           WS_OVERLAPPEDWINDOW, /* default window */
-           CW_USEDEFAULT,       /* Windows decides the position */
-           CW_USEDEFAULT,       /* where the window ends up on the screen */
-           694,                 /* The programs width */
-           575,                 /* and height in pixels */
-           HWND_DESKTOP,        /* The window is a child-window to desktop */
-           NULL,                /* No menu */
-           hThisInstance,       /* Program Instance handler */
-           NULL                 /* No Window Creation data */
+           0,                   					/* Extended possibilites for variation */
+           szClassName,         					/* Classname */
+           _T("Bisection Root Finding App"),        /* Title Text */
+           WS_OVERLAPPEDWINDOW, 					/* default window */
+           CW_USEDEFAULT,       					/* Windows decides the position */
+           CW_USEDEFAULT,       					/* where the window ends up on the screen */
+           694,                						/* The programs width */
+           575,                 					/* and height in pixels */
+           HWND_DESKTOP,        					/* The window is a child-window to desktop */
+           NULL,                					/* No menu */
+           hThisInstance,       					/* Program Instance handler */
+           NULL                 					/* No Window Creation data */
            );
 
     /* Make the window visible on the screen */
     ShowWindow (hwnd, nCmdShow);
 
     /* Run the message loop. It will run until GetMessage() returns 0 */
-    while (GetMessage (&messages, NULL, 0, 0))
-    {
+    while (GetMessage (&messages, NULL, 0, 0)) {
         /* Translate virtual-key messages into character messages */
         TranslateMessage(&messages);
         /* Send message to WindowProcedure */
