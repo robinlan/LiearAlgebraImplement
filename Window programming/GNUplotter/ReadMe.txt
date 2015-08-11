@@ -1,0 +1,1 @@
+Remember to add "...\gnuplot\bin;" in your environment variable path before using the functions.
