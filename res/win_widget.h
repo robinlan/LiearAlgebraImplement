@@ -2,6 +2,94 @@
 #include <string>
 using namespace std;
 
+/***************************************************************************
+
+Example usage:
+	Set global values: 
+		HWND aHwnd;
+		int nGlobCmdShow;
+		LRESULT CALLBACK aWindowProcedure (HWND, UINT, WPARAM, LPARAM);
+		TCHAR aSzClassName[ ] = _T("Some_text_here");
+	
+	In WinMain function:
+		WinWindows winc3Object(szClassName3,hThisInstance,nCmdShow);
+		WNDCLASSEX winc3 = winc3Object.getWinClass(WindowProcedure3);
+		nGlobCmdShow = nCmdShow;
+		if( !winc3Object.getWinRegisterClass())
+			return 0;
+		thirdHwnd = winc3Object.getWinHWND(444,275,_T("Window title here"));
+	
+	In some WinProc function that trigger the window:
+		ShowWindow (thirdHwnd, nGlobCmdShow);
+
+***************************************************************************/
+class WinWindows{
+	private:
+		WNDCLASSEX winc;		 //Windows class object
+		TCHAR* szClassName;  	 //Class identity
+		HWND hwnd; 				 //News handler
+		HINSTANCE hThisInstance; //APP object
+		int nCmdShow;			 //Windows showing type
+	public:
+		WinWindows(){}
+		/*Construct object with szClassName, HINSTANCE and show type*/
+		WinWindows(TCHAR* _szClassName, HINSTANCE _hThisInstance,int _nCmdShow){
+			szClassName = _szClassName;
+			hThisInstance = _hThisInstance;
+			nCmdShow = _nCmdShow;
+		}
+		/*Access and construct the WNDCLASSEX object with WINPROC object*/
+		WNDCLASSEX getWinClass(WNDPROC _winProc){
+			
+			/* The Window structure */
+			winc.hInstance = hThisInstance;
+			winc.lpszClassName = szClassName;
+			winc.lpfnWndProc = _winProc;      		  /* This function is called by windows */
+			winc.style = CS_DBLCLKS;                 /* Catch double-clicks */
+			winc.cbSize = sizeof (WNDCLASSEX);
+
+			/* Use default icon and mouse-pointer */
+			winc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+			winc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+			winc.hCursor = LoadCursor (NULL, IDC_ARROW);
+			winc.lpszMenuName = NULL;                 /* No menu */
+			winc.cbClsExtra = 0;                      /* No extra bytes after the window class */
+			winc.cbWndExtra = 0;                      /* structure or the window instance */
+			
+			/* Use Windows's default colour as the background of the window */
+			winc.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
+			
+			return winc;
+		}
+		/*Access RegisterClassEx ATOM return value*/
+		ATOM getWinRegisterClass(){
+			
+			ATOM isRegister = RegisterClassEx(&winc);
+			return isRegister;
+			
+		}
+		/*Access the HWND object*/
+		HWND getWinHWND(int _length,int _width,LPCTSTR _lpWindowName){
+			
+			hwnd = CreateWindowEx (
+				0,                   									/* Extended possibilites for variation */
+				szClassName,         									/* Classname */
+				_lpWindowName,        									/* Title Text */
+				WS_OVERLAPPEDWINDOW, 									/* default window */
+				CW_USEDEFAULT,       									/* Windows decides the position */
+				CW_USEDEFAULT,    									    /* where the window ends up on the screen */
+				_length,           									    /* The programs width */
+				_width,            									    /* and height in pixels */
+				HWND_DESKTOP,    									    /* The window is a child-window to desktop */
+				NULL,            									    /* No menu */
+				hThisInstance,										    /* Program Instance handler */
+				NULL                 									/* No Window Creation data */
+				);
+			
+			return hwnd;
+		}
+};
+
 /*********************************************************************
 
 Example usage in WM_CREATE:

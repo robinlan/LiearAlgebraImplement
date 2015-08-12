@@ -1,0 +1,50 @@
+# depslib dependency file v1.0
+1439353453 source:d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\main.cpp
+	<tchar.h>
+	"root_finding_panels.h"
+
+1439353442 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\root_finding_panels.h
+	<tchar.h>
+	<string>
+	"res/numeric_algorithms.h"
+
+1439258686 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\numeric_algorithms.h
+	<vector>
+	"math_function.h"
+	"win_widget.h"
+
+1439276573 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\math_function.h
+	<iostream>
+	<vector>
+	<math.h>
+	"type_convert.h"
+
+1439256025 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\type_convert.h
+	<sstream>
+	<ostream>
+	<string>
+
+1439348418 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\win_widget.h
+	<windows.h>
+	<string>
+
+1439353525 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\res\numeric_algorithms.h
+	<vector>
+	"math_function.h"
+	"win_widget.h"
+
+1439353531 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\res\math_function.h
+	<iostream>
+	<vector>
+	<math.h>
+	"type_convert.h"
+
+1439256025 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\res\type_convert.h
+	<sstream>
+	<ostream>
+	<string>
+
+1439348418 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\innergnuplot\res\win_widget.h
+	<windows.h>
+	<string>
+

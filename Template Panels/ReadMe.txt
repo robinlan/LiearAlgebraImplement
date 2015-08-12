@@ -1,0 +1,1 @@
+Here stores some template windows.
