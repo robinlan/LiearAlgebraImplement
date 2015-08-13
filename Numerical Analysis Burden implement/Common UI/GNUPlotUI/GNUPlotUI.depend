@@ -5,11 +5,18 @@
 	<string>
 	"typer_panels.h"
 
-1439430552 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\typer_panels.h
+1439437531 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\typer_panels.h
 	<tchar.h>
+	<stdio.h>
+	"res/gnu_plotter.h"
 	"res/win_widget.h"
 
 1439348418 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\res\win_widget.h
 	<windows.h>
 	<string>
+
+1439437416 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\res\gnu_plotter.h
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
 

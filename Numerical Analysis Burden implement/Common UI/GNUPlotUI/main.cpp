@@ -7,24 +7,24 @@
 #include <tchar.h>
 #include <stdlib.h>
 #include <string>
-#include "typer_panels.h"
+#include "gnuplot_typer_panels.h"
 
-#define IDC_TYPER_BUTTON	101
+#define IDC_GNUPLOTTYPER_BUTTON	101
 #define BUFFER(x,y) *(pBuffer + y * cxBuffer + x)
 
 using namespace std;
 
-LRESULT CALLBACK TyperWindowProcedure (HWND, UINT, WPARAM, LPARAM) ;
+LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND, UINT, WPARAM, LPARAM) ;
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM) ;
 
-HWND typerHwnd;
+HWND GNUPlotTyperHwnd;
 int nGlobCmdShow;
 
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     PSTR szCmdLine, int iCmdShow)
 {
      static TCHAR szMainAppName[] = TEXT ("Main") ;
-	 static TCHAR szTyperAppName[] = TEXT ("Typer") ;
+	 static TCHAR szGNUPlotTyperAppName[] = TEXT ("GNUPlotTyper") ;
      HWND         hwnd ;
      MSG          msg ;
      WNDCLASS     wndclass ;
@@ -42,14 +42,14 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	 nGlobCmdShow = iCmdShow;
 
-	 WinWindows wincTyperObject(szTyperAppName,hInstance,iCmdShow);
-	 WNDCLASSEX wincTyper = wincTyperObject.getWinClass(TyperWindowProcedure);
+	 WinWindows wincGNUPlotTyperObject(szGNUPlotTyperAppName,hInstance,iCmdShow);
+	 WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure);
 
      if (!RegisterClass (&wndclass)) {
           return 0 ;
      }
 
-	 if( !wincTyperObject.getWinRegisterClass())
+	 if( !wincGNUPlotTyperObject.getWinRegisterClass())
 		return 0;
 
      hwnd = CreateWindow (szMainAppName, TEXT ("Typing Program"),
@@ -58,7 +58,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                           CW_USEDEFAULT, CW_USEDEFAULT,
                           NULL, NULL, hInstance, NULL) ;
 
-	 typerHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer Program"));
+	 GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer Program"));
 
      ShowWindow (hwnd, iCmdShow) ;
      UpdateWindow (hwnd) ;
@@ -76,7 +76,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
      case WM_CREATE: {
 
-		WinButton button1("GO",50,220,100,24,hwnd,(HMENU)IDC_TYPER_BUTTON);
+		WinButton button1("GO",50,220,100,24,hwnd,(HMENU)IDC_GNUPLOTTYPER_BUTTON);
 		HWND hbutton = button1.getButton();
 
 		break;
@@ -89,7 +89,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 			case IDC_TYPER_BUTTON: {
 
 				/* Make the window visible on the screen */
-				ShowWindow (typerHwnd, nGlobCmdShow);
+				ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
 
 				break;
 			}

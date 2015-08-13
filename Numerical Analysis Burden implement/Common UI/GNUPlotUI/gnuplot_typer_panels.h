@@ -3,20 +3,20 @@ root_finding_panels.h, by Robin Lan - 2015/08/12
 				
 Example usage:
 	Global setting:
-		HWND typerHwnd;
-		static TCHAR szTyperAppName[] = TEXT("Typer") ;
+		HWND GNUPlotTyperHwnd;
+		static TCHAR szTyperAppName[] = TEXT("GNUPlotTyper") ;
 		int nGlobCmdShow;
 	
 	In WinMain:
 		nGlobCmdShow = iCmdShow;
-		WinWindows wincTyperObject(szTyperAppName,hInstance,iCmdShow);
-		WNDCLASSEX wincTyper = wincTyperObject.getWinClass(TyperWindowProcedure);
-		if( !wincTyperObject.getWinRegisterClass())
+		WinWindows wincGNUPlotTyperObject(szGNUPlotTyperAppName,hInstance,iCmdShow);
+		WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure);
+		if( !wincGNUPlotTyperObject.getWinRegisterClass())
 			return 0;
-		typerHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer Program"));
+		GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer Program"));
 		
 	In trigger place:
-		ShowWindow (typerHwnd, nGlobCmdShow);
+		ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
 				
 ********************************************************************************/
 
@@ -27,12 +27,14 @@ Example usage:
 #endif
 
 #include <tchar.h>
+#include <stdio.h>
+#include "res/gnu_plotter.h"
 #include "res/win_widget.h"
 
 #define IDC_TYPER_BUTTON	101
 #define BUFFER(x,y) *(pBuffer + y * cxBuffer + x)
 
-LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
      static DWORD   dwCharSet = DEFAULT_CHARSET ;
      static int     cxChar, cyChar, cxClient, cyClient, cxBuffer, cyBuffer,
@@ -40,6 +42,7 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
      static TCHAR * pBuffer = NULL ;
 	 
 	 static string order = "";   //Store the order every line
+	 static GNUplot plotter("D:/gnuplot/bin");
 	 
      HDC            hdc ;
      int            x, y, i ;
@@ -182,6 +185,7 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 
                case '\r':                    // carriage return
 					//showMessage(order);
+					plotter(order);     	 // Call GNU plot
 					
 					order = "";
 
@@ -249,9 +253,9 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
           EndPaint (hwnd, &ps) ;
           return 0 ;
 
-     case WM_CLOSE:
-			ShowWindow(hwnd, SW_HIDE);
-			return 0 ;
+     case WM_DESTROY:
+          PostQuitMessage (0) ;
+          return 0 ;
      }
      return DefWindowProc (hwnd, message, wParam, lParam) ;
 }

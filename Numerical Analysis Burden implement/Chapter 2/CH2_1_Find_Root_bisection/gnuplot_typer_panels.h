@@ -1,23 +1,23 @@
 /********************************************************************************
-root_finding_panels.h, by Robin Lan - 2015/08/12
-				
+GNUplot_typer_panels.h, by Robin Lan - 2015/08/12
+
 Example usage:
 	Global setting:
-		HWND typerHwnd;
-		static TCHAR szTyperAppName[] = TEXT("Typer") ;
+		HWND GNUPlotTyperHwnd;
+		static TCHAR szTyperAppName[] = TEXT("GNUPlotTyper") ;
 		int nGlobCmdShow;
-	
+
 	In WinMain:
 		nGlobCmdShow = iCmdShow;
-		WinWindows wincTyperObject(szTyperAppName,hInstance,iCmdShow);
-		WNDCLASSEX wincTyper = wincTyperObject.getWinClass(TyperWindowProcedure);
-		if( !wincTyperObject.getWinRegisterClass())
+		WinWindows wincGNUPlotTyperObject(szGNUPlotTyperAppName,hInstance,iCmdShow);
+		WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure);
+		if( !wincGNUPlotTyperObject.getWinRegisterClass())
 			return 0;
-		typerHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer Program"));
-		
+		GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer Program"));
+
 	In trigger place:
-		ShowWindow (typerHwnd, nGlobCmdShow);
-				
+		ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
+
 ********************************************************************************/
 
 #if defined(UNICODE) && !defined(_UNICODE)
@@ -27,20 +27,26 @@ Example usage:
 #endif
 
 #include <tchar.h>
-#include "res/win_widget.h"
+#include <stdio.h>
+#include <string>
+#include <windows.h>
+#include "res/gnu_plotter.h"
 
 #define IDC_TYPER_BUTTON	101
 #define BUFFER(x,y) *(pBuffer + y * cxBuffer + x)
 
-LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+using namespace std;
+
+LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
      static DWORD   dwCharSet = DEFAULT_CHARSET ;
      static int     cxChar, cyChar, cxClient, cyClient, cxBuffer, cyBuffer,
                     xCaret, yCaret ;
      static TCHAR * pBuffer = NULL ;
-	 
+
 	 static string order = "";   //Store the order every line
-	 
+	 static GNUplot plotter("D:/gnuplot/bin");
+
      HDC            hdc ;
      int            x, y, i ;
      PAINTSTRUCT    ps ;
@@ -127,10 +133,17 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
           case VK_RIGHT:
                xCaret = min (xCaret + 1, cxBuffer - 1) ;
                break ;
+			   
+		  case VK_UP:{
+			   //Store the last order - not yet finish
+			   break;
+		  }
 
           case VK_DELETE:
                for (x = xCaret ; x < cxBuffer - 1 ; x++)
                     BUFFER (x, yCaret) = BUFFER (x + 1, yCaret) ;
+				
+			   order = order.substr(0,order.length()-1);
 
                BUFFER (cxBuffer - 1, yCaret) = ' ' ;
 
@@ -180,17 +193,30 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 
                     break ;
 
-               case '\r':                    // carriage return
+               case '\r': {                  // carriage return
 					//showMessage(order);
+					if(order == "exit"){
+						for (y = 0 ; y < cyBuffer ; y++)
+							for (x = 0 ; x < cxBuffer ; x++)
+								BUFFER (x, y) = ' ' ;
+
+						xCaret = 0 ;
+						yCaret = 0 ;
+						
+						PostMessage(hwnd, WM_CLOSE, 0, 0);
+					} else {
+						plotter(order);     	 // Call GNU plot
+						
+						xCaret = 0 ;
+
+						if (++yCaret == cyBuffer)
+							yCaret = 0 ;
+					}
 					
 					order = "";
 
-					xCaret = 0 ;
-
-                    if (++yCaret == cyBuffer)
-                         yCaret = 0 ;
-
                     break ;
+				}
 
                case '\x1B':                  // escape
                     for (y = 0 ; y < cyBuffer ; y++)
@@ -199,13 +225,14 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 
                     xCaret = 0 ;
                     yCaret = 0 ;
+					
+					order = "";
 
                     InvalidateRect (hwnd, NULL, FALSE) ;
                     break ;
 
                default:                      // character codes
                     BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
-
 					order += (char) wParam;
 
                     HideCaret (hwnd) ;
@@ -249,8 +276,8 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
           EndPaint (hwnd, &ps) ;
           return 0 ;
 
-     case WM_DESTROY:
-          PostQuitMessage (0) ;
+     case WM_CLOSE:
+		  ShowWindow(hwnd, SW_HIDE);
           return 0 ;
      }
      return DefWindowProc (hwnd, message, wParam, lParam) ;

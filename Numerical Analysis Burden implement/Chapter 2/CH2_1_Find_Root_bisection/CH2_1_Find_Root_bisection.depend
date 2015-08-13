@@ -1,0 +1,43 @@
+# depslib dependency file v1.0
+1439447035 source:d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\main.cpp
+	<tchar.h>
+	"gnuplot_typer_panels.h"
+	"root_finding_panels.h"
+
+1439459696 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\gnuplot_typer_panels.h
+	<tchar.h>
+	<stdio.h>
+	<string>
+	<windows.h>
+	"res/gnu_plotter.h"
+
+1439437653 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\gnu_plotter.h
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+
+1439445953 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\root_finding_panels.h
+	<tchar.h>
+	<string>
+	"res/numeric_algorithms.h"
+
+1439258686 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\numeric_algorithms.h
+	<vector>
+	"math_function.h"
+	"win_widget.h"
+
+1439276573 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\math_function.h
+	<iostream>
+	<vector>
+	<math.h>
+	"type_convert.h"
+
+1439256025 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\type_convert.h
+	<sstream>
+	<ostream>
+	<string>
+
+1439348418 d:\programming\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\win_widget.h
+	<windows.h>
+	<string>
+

@@ -1,23 +1,23 @@
 /********************************************************************************
-root_finding_panels.h, by Robin Lan - 2015/08/12
-				
+GNUplot_typer_panels.h, by Robin Lan - 2015/08/12
+
 Example usage:
 	Global setting:
-		HWND typerHwnd;
-		static TCHAR szTyperAppName[] = TEXT("Typer") ;
+		HWND GNUPlotTyperHwnd;
+		static TCHAR szTyperAppName[] = TEXT("GNUPlotTyper") ;
 		int nGlobCmdShow;
-	
+
 	In WinMain:
 		nGlobCmdShow = iCmdShow;
-		WinWindows wincTyperObject(szTyperAppName,hInstance,iCmdShow);
-		WNDCLASSEX wincTyper = wincTyperObject.getWinClass(TyperWindowProcedure);
-		if( !wincTyperObject.getWinRegisterClass())
+		WinWindows wincGNUPlotTyperObject(szGNUPlotTyperAppName,hInstance,iCmdShow);
+		WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure);
+		if( !wincGNUPlotTyperObject.getWinRegisterClass())
 			return 0;
-		typerHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer Program"));
-		
+		GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer Program"));
+
 	In trigger place:
-		ShowWindow (typerHwnd, nGlobCmdShow);
-				
+		ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
+
 ********************************************************************************/
 
 #if defined(UNICODE) && !defined(_UNICODE)
@@ -27,39 +27,48 @@ Example usage:
 #endif
 
 #include <tchar.h>
-#include "res/win_widget.h"
+#include <stdio.h>
+#include <string>
+#include <windows.h>
+#include "res/gnu_plotter.h"
 
 #define IDC_TYPER_BUTTON	101
 #define BUFFER(x,y) *(pBuffer + y * cxBuffer + x)
 
-LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+using namespace std;
+
+LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
      static DWORD   dwCharSet = DEFAULT_CHARSET ;
      static int     cxChar, cyChar, cxClient, cyClient, cxBuffer, cyBuffer,
                     xCaret, yCaret ;
      static TCHAR * pBuffer = NULL ;
+
+	 static string order = "";   //Store the order every line
+	 static GNUplot plotter("D:/gnuplot/bin");
+
      HDC            hdc ;
      int            x, y, i ;
      PAINTSTRUCT    ps ;
      TEXTMETRIC     tm ;
-     
-     switch (message)
-     {
+
+     switch (message) {
+
      case WM_INPUTLANGCHANGE:
           dwCharSet = wParam ;
-                                        // fall through
+
      case WM_CREATE:
           hdc = GetDC (hwnd) ;
           SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
                                    dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
-          
+
           GetTextMetrics (hdc, &tm) ;
           cxChar = tm.tmAveCharWidth ;
           cyChar = tm.tmHeight ;
-          
+
           DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
           ReleaseDC (hwnd, hdc) ;
-                                        // fall through                
+
      case WM_SIZE:
                // obtain window size in pixels
 
@@ -69,94 +78,81 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
                cyClient = HIWORD (lParam) ;
           }
                // calculate window size in characters
-          
+
           cxBuffer = max (1, cxClient / cxChar) ;
           cyBuffer = max (1, cyClient / cyChar) ;
-          
+
                // allocate memory for buffer and clear it
-          
+
           if (pBuffer != NULL)
                free (pBuffer) ;
 
           pBuffer = (TCHAR *) malloc (cxBuffer * cyBuffer * sizeof (TCHAR)) ;
-          
+
           for (y = 0 ; y < cyBuffer ; y++)
                for (x = 0 ; x < cxBuffer ; x++)
-                    BUFFER(x,y) = ' ' ;
-                    
+				   BUFFER(x,y) = ' ' ;
+
                // set caret to upper left corner
 
           xCaret = 0 ;
           yCaret = 0 ;
-                    
+
           if (hwnd == GetFocus ())
                SetCaretPos (xCaret * cxChar, yCaret * cyChar) ;
 
           InvalidateRect (hwnd, NULL, TRUE) ;
           return 0 ;
-                    
+
      case WM_SETFOCUS:
-               // create and show the caret
-          
           CreateCaret (hwnd, NULL, cxChar, cyChar) ;
           SetCaretPos (xCaret * cxChar, yCaret * cyChar) ;
           ShowCaret (hwnd) ;
           return 0 ;
-          
-     case WM_KILLFOCUS:
-               // hide and destroy the caret
 
+     case WM_KILLFOCUS:
           HideCaret (hwnd) ;
           DestroyCaret () ;
           return 0 ;
-          
+
      case WM_KEYDOWN:
           switch (wParam)
           {
           case VK_HOME:
                xCaret = 0 ;
                break ;
-               
+
           case VK_END:
                xCaret = cxBuffer - 1 ;
                break ;
-               
-          case VK_PRIOR:
-               yCaret = 0 ;
-               break ;
-               
-          case VK_NEXT:
-               yCaret = cyBuffer - 1 ;
-               break ;
-               
+
           case VK_LEFT:
                xCaret = max (xCaret - 1, 0) ;
                break ;
-               
+
           case VK_RIGHT:
                xCaret = min (xCaret + 1, cxBuffer - 1) ;
                break ;
-               
-          case VK_UP:
-               yCaret = max (yCaret - 1, 0) ;
-               break ;
-               
-          case VK_DOWN:
-               yCaret = min (yCaret + 1, cyBuffer - 1) ;
-               break ;
-               
+			   
+		  case VK_UP:{
+			   //Store the last order - not yet finish
+			   break;
+		  }
+
           case VK_DELETE:
                for (x = xCaret ; x < cxBuffer - 1 ; x++)
                     BUFFER (x, yCaret) = BUFFER (x + 1, yCaret) ;
-               
+				
+			   order = order.substr(0,order.length()-1);
+
                BUFFER (cxBuffer - 1, yCaret) = ' ' ;
-               
+
                HideCaret (hwnd) ;
                hdc = GetDC (hwnd) ;
-          
+
                SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
                                    dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
-                    
+
                TextOut (hdc, xCaret * cxChar, yCaret * cyChar,
                         & BUFFER (xCaret, yCaret),
                         cxBuffer - xCaret) ;
@@ -166,9 +162,10 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
                ShowCaret (hwnd) ;
                break ;
           }
+
           SetCaretPos (xCaret * cxChar, yCaret * cyChar) ;
           return 0 ;
-          
+
      case WM_CHAR:
           for (i = 0 ; i < (int) LOWORD (lParam) ; i++)
           {
@@ -181,7 +178,7 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
                          SendMessage (hwnd, WM_KEYDOWN, VK_DELETE, 1) ;
                     }
                     break ;
-                    
+
                case '\t':                    // tab
                     do
                     {
@@ -189,36 +186,58 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
                     }
                     while (xCaret % 8 != 0) ;
                     break ;
-                    
+
                case '\n':                    // line feed
                     if (++yCaret == cyBuffer)
                          yCaret = 0 ;
+
                     break ;
-                    
-               case '\r':                    // carriage return
-                    xCaret = 0 ;
-                    
-                    if (++yCaret == cyBuffer)
-                         yCaret = 0 ;
+
+               case '\r': {                  // carriage return
+					//showMessage(order);
+					if(order == "exit"){
+						for (y = 0 ; y < cyBuffer ; y++)
+							for (x = 0 ; x < cxBuffer ; x++)
+								BUFFER (x, y) = ' ' ;
+
+						xCaret = 0 ;
+						yCaret = 0 ;
+						
+						PostMessage(hwnd, WM_CLOSE, 0, 0);
+					} else {
+						plotter(order);     	 // Call GNU plot
+						
+						xCaret = 0 ;
+
+						if (++yCaret == cyBuffer)
+							yCaret = 0 ;
+					}
+					
+					order = "";
+
                     break ;
-                    
+				}
+
                case '\x1B':                  // escape
                     for (y = 0 ; y < cyBuffer ; y++)
                          for (x = 0 ; x < cxBuffer ; x++)
                               BUFFER (x, y) = ' ' ;
-                         
+
                     xCaret = 0 ;
                     yCaret = 0 ;
-                         
+					
+					order = "";
+
                     InvalidateRect (hwnd, NULL, FALSE) ;
                     break ;
-                         
+
                default:                      // character codes
                     BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
-                    
+					order += (char) wParam;
+
                     HideCaret (hwnd) ;
                     hdc = GetDC (hwnd) ;
-          
+
                     SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
                                    dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
 
@@ -233,32 +252,32 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
                     if (++xCaret == cxBuffer)
                     {
                          xCaret = 0 ;
-                         
+
                          if (++yCaret == cyBuffer)
                               yCaret = 0 ;
                     }
                     break ;
                }
           }
-          
+
           SetCaretPos (xCaret * cxChar, yCaret * cyChar) ;
           return 0 ;
-          
+
      case WM_PAINT:
           hdc = BeginPaint (hwnd, &ps) ;
-          
+
           SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
                                    dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
-                              
+
           for (y = 0 ; y < cyBuffer ; y++)
                TextOut (hdc, 0, y * cyChar, & BUFFER(0,y), cxBuffer) ;
 
           DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
           EndPaint (hwnd, &ps) ;
           return 0 ;
-          
-     case WM_DESTROY:
-          PostQuitMessage (0) ;
+
+     case WM_CLOSE:
+		  ShowWindow(hwnd, SW_HIDE);
           return 0 ;
      }
      return DefWindowProc (hwnd, message, wParam, lParam) ;

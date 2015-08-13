@@ -1,4 +1,5 @@
 #include<iostream>
+#include<stdio.h>
 #include<stdlib.h>
 using namespace std;
 
@@ -13,6 +14,8 @@ Example usage:
 class GNUplot {
 public:
 	GNUplot() throw(string);
+	//Construct GNUplot with address
+	GNUplot(string _address) throw(string);
 	~GNUplot();
 	void operator ()(const string & command);
 protected:
@@ -20,7 +23,15 @@ protected:
 };
 
 GNUplot::GNUplot() throw(string) {
-	gnuplotpipe=popen("gnuplot ","w");
+	gnuplotpipe=popen("D:/gnuplot/bin/gnuplot ","w");
+	if (!gnuplotpipe) {
+		throw("Gnuplot not found !");
+	}
+}
+
+GNUplot::GNUplot(string _address) throw(string) {
+	string order = _address+"/gnuplot ";
+	gnuplotpipe=popen(order.c_str(),"w");
 	if (!gnuplotpipe) {
 		throw("Gnuplot not found !");
 	}
