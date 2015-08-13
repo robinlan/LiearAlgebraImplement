@@ -16,10 +16,12 @@ public:
 	GNUplot() throw(string);
 	//Construct GNUplot with address
 	GNUplot(string _address) throw(string);
+	void setAddress(string _address);
 	~GNUplot();
 	void operator ()(const string & command);
 protected:
 	FILE *gnuplotpipe;
+	string GNUAddress;
 };
 
 GNUplot::GNUplot() throw(string) {
@@ -35,6 +37,10 @@ GNUplot::GNUplot(string _address) throw(string) {
 	if (!gnuplotpipe) {
 		throw("Gnuplot not found !");
 	}
+}
+
+void GNUplot::setAddress(string _address){
+    GNUAddress = _address;
 }
 
 GNUplot::~GNUplot() {

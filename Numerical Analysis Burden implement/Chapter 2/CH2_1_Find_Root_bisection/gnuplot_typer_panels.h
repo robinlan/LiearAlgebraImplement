@@ -29,6 +29,7 @@ Example usage:
 #include <tchar.h>
 #include <stdio.h>
 #include <string>
+#include <vector>
 #include <windows.h>
 #include "res/gnu_plotter.h"
 
@@ -45,7 +46,10 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
      static TCHAR * pBuffer = NULL ;
 
 	 static string order = "";   //Store the order every line
-	 static GNUplot plotter("D:/gnuplot/bin");
+	 static vector<string> orderVector;
+	 static int curOrderNum = 0;
+	 
+	 static GNUplot plotter;
 
      HDC            hdc ;
      int            x, y, i ;
@@ -135,17 +139,43 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
                break ;
 			   
 		  case VK_UP:{
-			   //Store the last order - not yet finish
+
+                char* tmpCharArray = const_cast<char*>(orderVector.at(curOrderNum-1).c_str());
+				
+				for (x = 0 ; x < cxBuffer ; x++)
+                    BUFFER (x, yCaret) =  ' ';
+				
+				for (x = 0 ; x < orderVector.at(curOrderNum-1).length() ; x++)
+                    BUFFER (x, yCaret) =  *(tmpCharArray+x);
+				
+				order = orderVector.at(curOrderNum-1);
+				xCaret = orderVector.at(curOrderNum-1).length();
+				
+				if(curOrderNum > 0)curOrderNum = curOrderNum - 1;
+
+                HideCaret (hwnd) ;
+                hdc = GetDC (hwnd) ;
+
+                SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
+                                   dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
+
+                TextOut (hdc, 0, yCaret * cyChar,
+                        & BUFFER (0, yCaret),
+                        cxBuffer) ;
+
+                DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
+                ReleaseDC (hwnd, hdc) ;
+                ShowCaret (hwnd) ;
+
 			   break;
 		  }
 
           case VK_DELETE:
                for (x = xCaret ; x < cxBuffer - 1 ; x++)
                     BUFFER (x, yCaret) = BUFFER (x + 1, yCaret) ;
+			   BUFFER (cxBuffer - 1, yCaret) = ' ' ;
 				
-			   order = order.substr(0,order.length()-1);
-
-               BUFFER (cxBuffer - 1, yCaret) = ' ' ;
+			   order.erase(xCaret,1);
 
                HideCaret (hwnd) ;
                hdc = GetDC (hwnd) ;
@@ -204,6 +234,10 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 						yCaret = 0 ;
 						
 						PostMessage(hwnd, WM_CLOSE, 0, 0);
+					} else if(order.substr(0,2) == "cd"){
+						
+						plotter.setAddress(order.substr(4,order.length()-4));
+						
 					} else {
 						plotter(order);     	 // Call GNU plot
 						
@@ -213,7 +247,9 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 							yCaret = 0 ;
 					}
 					
+					orderVector.push_back(order);
 					order = "";
+					curOrderNum++;
 
                     break ;
 				}
@@ -232,22 +268,37 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
                     break ;
 
                default:                      // character codes
-                    BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
-					order += (char) wParam;
 
-                    HideCaret (hwnd) ;
-                    hdc = GetDC (hwnd) ;
+					if(BUFFER (xCaret, yCaret) == ' '){
+						
+						BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
+						order += (char) wParam;
+						
+					} else {
+						
+						for(x = cxBuffer-1;x > xCaret;x--){
+							BUFFER (x, yCaret) = BUFFER (x-1, yCaret);
+						}
+						
+						BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
+						
+						order.insert(xCaret,1,(char)wParam);
+						
+					}
+					
+					HideCaret (hwnd) ;
+					hdc = GetDC (hwnd) ;
 
-                    SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
-                                   dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
+					SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
+										dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
 
-                    TextOut (hdc, xCaret * cxChar, yCaret * cyChar,
-                             & BUFFER (xCaret, yCaret), 1) ;
-
-                    DeleteObject (
-                         SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
-                    ReleaseDC (hwnd, hdc) ;
-                    ShowCaret (hwnd) ;
+					TextOut (hdc, xCaret * cxChar, yCaret * cyChar,
+							& BUFFER (xCaret, yCaret),
+							cxBuffer - xCaret) ;
+							
+					DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
+					ReleaseDC (hwnd, hdc) ;
+					ShowCaret (hwnd) ;
 
                     if (++xCaret == cxBuffer)
                     {
