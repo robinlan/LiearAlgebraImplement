@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1439430434 source:d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\main.cpp
+	<tchar.h>
+	<stdlib.h>
+	<string>
+	"typer_panels.h"
+
+1439430552 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\typer_panels.h
+	<tchar.h>
+	"res/win_widget.h"
+
+1439348418 d:\programming\liearalgebraimplement\numerical analysis burden implement\bissection ui\gnuplotui\res\win_widget.h
+	<windows.h>
+	<string>
+
