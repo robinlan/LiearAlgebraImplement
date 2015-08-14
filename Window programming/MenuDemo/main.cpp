@@ -6,6 +6,16 @@
 
 #include <tchar.h>
 #include <windows.h>
+#include "win_widget.h"
+
+#define IDM_FILE_NEW  101
+#define IDM_FILE_OPEN 102
+#define IDM_EDIT_COPY 103
+#define IDM_EDIT_CUT  104
+#define IDM_ABOUT_MYSELF  105
+#define IDM_ABOUT_MYFAMILY  106
+#define IDM_VIEW_BLACK  107
+#define IDM_VIEW_WHITE  108
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
@@ -80,23 +90,77 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    UINT uTemp = MF_BYPOSITION | MF_POPUP;
+
     switch (message)                  /* handle the messages */
     {
     case WM_CREATE:{
-        HMENU hMenubar = CreateMenu();
-        HMENU hFile = CreateMenu();
-        HMENU hOptions = CreateMenu();
+        HMENU hMenu;
+        /*HMENU hMenuPop;
+        hMenu = CreateMenu();
+        hMenuPop = CreateMenu();
+        AppendMenu(hMenuPop,MF_STRING,IDM_FILE_NEW,TEXT("New"));
+        AppendMenu(hMenuPop,MF_STRING,IDM_FILE_OPEN,TEXT("Open"));
+        AppendMenu(hMenu,MF_POPUP,(unsigned int)hMenuPop,TEXT("File"));
 
-        AppendMenu(hMenubar,MF_POPUP,(UINT_PTR)hFile,"File");
-        AppendMenu(hMenubar,MF_POPUP,NULL,"Edit");
-        AppendMenu(hMenubar,MF_POPUP,(UINT)hOptions,"Options");
+        hMenuPop = CreateMenu();
 
-        AppendMenu(hFile,MF_POPUP,NULL,"Exit");
+        AppendMenu(hMenuPop,MF_STRING,IDM_EDIT_COPY,TEXT("Copy"));
+        AppendMenu(hMenuPop, MF_SEPARATOR, 0, NULL) ;
+        AppendMenu(hMenuPop,MF_STRING,IDM_EDIT_CUT,TEXT("Cut"));
+        AppendMenu(hMenu,MF_POPUP,(unsigned int)hMenuPop,TEXT("Edit"));
+        InsertMenu(hMenu, 0, uTemp, IDM_EDIT_CUT+7, TEXT("NewAdd"));*/
 
-        AppendMenu(hOptions,MF_POPUP,NULL,"Option1");
-        AppendMenu(hOptions,MF_POPUP,NULL,"Option2");
+        WinMenu thirdPopupMenu;
+        thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYSELF,TEXT("Myself"),1);
+        thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYFAMILY,TEXT("My family"),1);
+        thirdPopupMenu.linkPopupMenuToMainMenu(TEXT("About"),1);
 
-        SetMenu(hwnd,hMenubar);
+        thirdPopupMenu.createPopupMenu();
+        thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYSELF,TEXT("Black"),2);
+        thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYFAMILY,TEXT("White"),2);
+        thirdPopupMenu.linkPopupMenuToMainMenu(TEXT("View"),2);
+
+        hMenu = thirdPopupMenu.getMainMenu();
+
+        SetMenu(hwnd, hMenu);
+        break;
+    }
+    case WM_COMMAND: {
+
+        switch(LOWORD(wParam)){
+
+            case IDM_FILE_NEW: {
+                MessageBox(NULL,
+						"File->New is called.",
+						"Information",
+						MB_ICONINFORMATION);
+                break;
+            }
+            case IDM_FILE_OPEN: {
+                MessageBox(NULL,
+						"File->Open is called.",
+						"Information",
+						MB_ICONINFORMATION);
+                break;
+            }
+            case IDM_EDIT_COPY: {
+                MessageBox(NULL,
+						"Edit->Copy is called.",
+						"Information",
+						MB_ICONINFORMATION);
+                break;
+            }
+            case IDM_EDIT_CUT: {
+                MessageBox(NULL,
+						"Edit->Cut is called.",
+						"Information",
+						MB_ICONINFORMATION);
+                break;
+            }
+
+        }
+
         break;
     }
 

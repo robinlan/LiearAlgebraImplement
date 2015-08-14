@@ -268,7 +268,7 @@ class WinMenu{
 			HMENU popupMenu = hPopupMenuMap[_popMenuNum];
 			hPopupMenuMap.erase(_popMenuNum);
 			AppendMenu(popupMenu,MF_STRING,_strID,_text);
-			hPopupMenuMap.insert(popupMenu);
+			hPopupMenuMap.insert(make_pair(_popMenuNum,popupMenu));
 		}
 		/*Link pop-up menu to the main menu*/
 		void linkPopupMenuToMainMenu(LPCTSTR _text, int _popMenuNum){
