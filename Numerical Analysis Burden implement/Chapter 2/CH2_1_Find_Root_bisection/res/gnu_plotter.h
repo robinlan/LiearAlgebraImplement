@@ -3,13 +3,13 @@
 #include<stdlib.h>
 using namespace std;
 
-/*************************
+/**************************
 
 Example usage:
 	GNUplot plotter;
 	plotter("plot sin(x)");
 
-*************************/
+**************************/
 
 class GNUplot {
 public:

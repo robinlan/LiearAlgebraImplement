@@ -1,26 +1,21 @@
 #include <windows.h>
 #include <string>
+#include <map>
 using namespace std;
 
 /***************************************************************************
 
 Example usage:
-	Set global values: 
-		HWND aHwnd;
-		int nGlobCmdShow;
-		LRESULT CALLBACK aWindowProcedure (HWND, UINT, WPARAM, LPARAM);
-		TCHAR aSzClassName[ ] = _T("Some_text_here");
-	
-	In WinMain function:
-		WinWindows winc3Object(szClassName3,hThisInstance,nCmdShow);
-		WNDCLASSEX winc3 = winc3Object.getWinClass(WindowProcedure3);
-		nGlobCmdShow = nCmdShow;
-		if( !winc3Object.getWinRegisterClass())
+	In trigger function:
+		TCHAR settingSzClassName[ ] = _T("Address_setting");
+		WinWindows wincSettingObject(settingSzClassName,hFatherInstance,SW_SHOWDEFAULT);
+		WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure2);
+		if( !wincSettingObject.getWinRegisterClass())
 			return 0;
-		thirdHwnd = winc3Object.getWinHWND(444,275,_T("Window title here"));
+		addressHWND = wincSettingObject.getWinHWND(250,100,_T("Setting"));
 	
 	In some WinProc function that trigger the window:
-		ShowWindow (thirdHwnd, nGlobCmdShow);
+		ShowWindow (addressHWND, nGlobCmdShow);
 
 ***************************************************************************/
 class WinWindows{
@@ -240,6 +235,61 @@ class WinEditbox{
 		/*Access the edit box object*/
 		HWND getEditbox(){
 			return winEditbox;
+		}
+};
+
+/*************
+
+Example usage:
+	WinMenu thirdPopupMenu;
+    thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYSELF,TEXT("Myself"),1);
+    thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYFAMILY,TEXT("My family"),1);
+    thirdPopupMenu.linkPopupMenuToMainMenu(TEXT("About"),1);
+
+    thirdPopupMenu.createPopupMenu();
+    thirdPopupMenu.insertStrOptions(IDM_VIEW_BLACK,TEXT("Black"),2);
+    thirdPopupMenu.insertStrOptions(IDM_VIEW_WHITE,TEXT("White"),2);
+    thirdPopupMenu.linkPopupMenuToMainMenu(TEXT("View"),2);
+
+	hMenu = thirdPopupMenu.getMainMenu();
+
+	SetMenu(hwnd, hMenu);
+
+*************/
+class WinMenu{
+	private:
+		UINT uTemp;     			  //For InsertMenu function use
+		HMENU hMenu;				  //The main menu bar
+		int popupMenuNum;			  //Number of pop-up menus
+		map<int,HMENU> hPopupMenuMap;//Store the pop-up menus
+	public:
+		WinMenu(){
+			uTemp = MF_BYPOSITION | MF_POPUP;
+			hMenu = CreateMenu();
+			popupMenuNum = 0;
+			createPopupMenu();
+		}
+		/*Create the pop-up menu*/
+		void createPopupMenu(){
+			HMENU hPopupMenu = CreateMenu();
+			hPopupMenuMap.insert(make_pair(popupMenuNum+1,hPopupMenu));
+			popupMenuNum++;
+		}
+		/*Insert string options*/
+		void insertStrOptions(UINT _strID, LPCTSTR _text, int _popMenuNum){
+			HMENU popupMenu = hPopupMenuMap[_popMenuNum];
+			hPopupMenuMap.erase(_popMenuNum);
+			AppendMenu(popupMenu,MF_STRING,_strID,_text);
+			hPopupMenuMap.insert(make_pair(_popMenuNum,popupMenu));
+		}
+		/*Link pop-up menu to the main menu*/
+		void linkPopupMenuToMainMenu(LPCTSTR _text, int _popMenuNum){
+			HMENU popupMenu = hPopupMenuMap[_popMenuNum];
+			AppendMenu(hMenu,MF_POPUP,(unsigned int)popupMenu,_text);
+		}
+		/*Access the main menu*/
+		HMENU getMainMenu(){
+			return hMenu;
 		}
 };
 

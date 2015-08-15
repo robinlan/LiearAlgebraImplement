@@ -2,19 +2,20 @@
 GNUplot_typer_panels.h, by Robin Lan - 2015/08/12
 
 Example usage:
+	Include:
+		res/win_widget.h
+	
 	Global setting:
+		HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
+		TCHAR szGNUPlotTyperAppName[] = TEXT("GNUPlotTyper") ;
 		HWND GNUPlotTyperHwnd;
-		static TCHAR szTyperAppName[] = TEXT("GNUPlotTyper") ;
-		int nGlobCmdShow;
-
-	In WinMain:
-		nGlobCmdShow = iCmdShow;
-		WinWindows wincGNUPlotTyperObject(szGNUPlotTyperAppName,hInstance,iCmdShow);
-		WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure);
+		TCHAR GNUPlotTyperSzClassName[ ] = _T("GNUPlot_typer");
+		WinWindows wincGNUPlotTyperObject(GNUPlotTyperSzClassName,hFatherInstance,SW_SHOWDEFAULT);
+		WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure2);
 		if( !wincGNUPlotTyperObject.getWinRegisterClass())
 			return 0;
-		GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer Program"));
-
+		GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer"));
+	
 	In trigger place:
 		ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
 
@@ -30,16 +31,24 @@ Example usage:
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include <windows.h>
+#include "editable_window2.h"
 #include "res/gnu_plotter.h"
 
 #define IDC_TYPER_BUTTON	101
+#define IDC_SETTING_ADDRESS	102
 #define BUFFER(x,y) *(pBuffer + y * cxBuffer + x)
 
 using namespace std;
 
+LRESULT CALLBACK EditableWindowProcedure (HWND, UINT, WPARAM, LPARAM);
+
 LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+     static HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
+	 
+	 static WinMenu mainMenu;
+	 static HMENU hMenu;
+
      static DWORD   dwCharSet = DEFAULT_CHARSET ;
      static int     cxChar, cyChar, cxClient, cyClient, cxBuffer, cyBuffer,
                     xCaret, yCaret ;
@@ -48,8 +57,11 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 	 static string order = "";   //Store the order every line
 	 static vector<string> orderVector;
 	 static int curOrderNum = 0;
+
+	 static GNUplot plotter("D:/gnuplot/bin");
 	 
-	 static GNUplot plotter;
+	 static HWND addressHWND;
+	 static string address;
 
      HDC            hdc ;
      int            x, y, i ;
@@ -61,8 +73,21 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
      case WM_INPUTLANGCHANGE:
           dwCharSet = wParam ;
 
-     case WM_CREATE:
-          hdc = GetDC (hwnd) ;
+     case WM_CREATE: {
+				 
+		  TCHAR settingSzClassName[ ] = _T("Address_setting");
+		  WinWindows wincSettingObject(settingSzClassName,hFatherInstance,SW_SHOWDEFAULT);
+		  WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure2);
+		  if( !wincSettingObject.getWinRegisterClass())
+		  	  return 0;
+		  addressHWND = wincSettingObject.getWinHWND(250,100,_T("Setting"));
+		  
+		  mainMenu.insertStrOptions(IDC_SETTING_ADDRESS,TEXT("GNUPlot address"),1);
+		  mainMenu.linkPopupMenuToMainMenu(TEXT("Setting"),1);
+		  hMenu = mainMenu.getMainMenu();
+		  SetMenu(hwnd, hMenu);
+
+		  hdc = GetDC (hwnd) ;
           SelectObject (hdc, CreateFont (0, 0, 0, 0, 0, 0, 0, 0,
                                    dwCharSet, 0, 0, 0, FIXED_PITCH, NULL)) ;
 
@@ -71,7 +96,8 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
           cyChar = tm.tmHeight ;
 
           DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
-          ReleaseDC (hwnd, hdc) ;
+		  ReleaseDC (hwnd, hdc) ;
+	 }
 
      case WM_SIZE:
                // obtain window size in pixels
@@ -107,6 +133,23 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 
           InvalidateRect (hwnd, NULL, TRUE) ;
           return 0 ;
+		  
+	 case WM_COMMAND: {
+		 
+		 switch(LOWORD(wParam)){
+			 
+			 case IDC_SETTING_ADDRESS: {
+				 ShowWindow (addressHWND, SW_SHOWDEFAULT);
+				 char cName[256];
+				 GetClassName(hwnd, cName, 256);
+				 SendMessage (addressHWND, WM_NOTIFY, 0, (LPARAM)cName);
+				 break;
+			 }
+			 
+		 }
+		 
+		 return 0;
+	 }
 
      case WM_SETFOCUS:
           CreateCaret (hwnd, NULL, cxChar, cyChar) ;
@@ -137,20 +180,20 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
           case VK_RIGHT:
                xCaret = min (xCaret + 1, cxBuffer - 1) ;
                break ;
-			   
+
 		  case VK_UP:{
 
                 char* tmpCharArray = const_cast<char*>(orderVector.at(curOrderNum-1).c_str());
-				
+
 				for (x = 0 ; x < cxBuffer ; x++)
                     BUFFER (x, yCaret) =  ' ';
-				
+
 				for (x = 0 ; x < orderVector.at(curOrderNum-1).length() ; x++)
                     BUFFER (x, yCaret) =  *(tmpCharArray+x);
-				
+
 				order = orderVector.at(curOrderNum-1);
 				xCaret = orderVector.at(curOrderNum-1).length();
-				
+
 				if(curOrderNum > 0)curOrderNum = curOrderNum - 1;
 
                 HideCaret (hwnd) ;
@@ -174,7 +217,7 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
                for (x = xCaret ; x < cxBuffer - 1 ; x++)
                     BUFFER (x, yCaret) = BUFFER (x + 1, yCaret) ;
 			   BUFFER (cxBuffer - 1, yCaret) = ' ' ;
-				
+
 			   order.erase(xCaret,1);
 
                HideCaret (hwnd) ;
@@ -232,21 +275,21 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 
 						xCaret = 0 ;
 						yCaret = 0 ;
-						
+
 						PostMessage(hwnd, WM_CLOSE, 0, 0);
 					} else if(order.substr(0,2) == "cd"){
-						
+
 						plotter.setAddress(order.substr(4,order.length()-4));
-						
+
 					} else {
 						plotter(order);     	 // Call GNU plot
-						
+
 						xCaret = 0 ;
 
 						if (++yCaret == cyBuffer)
 							yCaret = 0 ;
 					}
-					
+
 					orderVector.push_back(order);
 					order = "";
 					curOrderNum++;
@@ -261,7 +304,7 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 
                     xCaret = 0 ;
                     yCaret = 0 ;
-					
+
 					order = "";
 
                     InvalidateRect (hwnd, NULL, FALSE) ;
@@ -270,22 +313,22 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
                default:                      // character codes
 
 					if(BUFFER (xCaret, yCaret) == ' '){
-						
+
 						BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
 						order += (char) wParam;
-						
+
 					} else {
-						
+
 						for(x = cxBuffer-1;x > xCaret;x--){
 							BUFFER (x, yCaret) = BUFFER (x-1, yCaret);
 						}
-						
+
 						BUFFER (xCaret, yCaret) = (TCHAR) wParam ;
-						
+
 						order.insert(xCaret,1,(char)wParam);
-						
+
 					}
-					
+
 					HideCaret (hwnd) ;
 					hdc = GetDC (hwnd) ;
 
@@ -295,7 +338,7 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
 					TextOut (hdc, xCaret * cxChar, yCaret * cyChar,
 							& BUFFER (xCaret, yCaret),
 							cxBuffer - xCaret) ;
-							
+
 					DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
 					ReleaseDC (hwnd, hdc) ;
 					ShowCaret (hwnd) ;
@@ -326,6 +369,13 @@ LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wP
           DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
           EndPaint (hwnd, &ps) ;
           return 0 ;
+		  
+	 case WM_NOTIFY: {
+			string tmp((char*)lParam);
+			address = tmp;
+            showMessage(address);
+            break;
+     }
 
      case WM_CLOSE:
 		  ShowWindow(hwnd, SW_HIDE);

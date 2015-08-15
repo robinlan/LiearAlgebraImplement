@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1439598805 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\menudemo\main.cpp
+	<tchar.h>
+	<windows.h>
+	"win_widget.h"
+
+1439598805 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\menudemo\win_widget.h
+	<windows.h>
+	<string>
+	<map>
+

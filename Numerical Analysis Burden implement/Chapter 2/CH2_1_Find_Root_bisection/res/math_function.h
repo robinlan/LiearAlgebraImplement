@@ -4,6 +4,15 @@
 #include "type_convert.h"
 using namespace std;
 
+/***********************************
+
+Example usage:
+	float result = 0.0;
+	for(int i=0;i<_mathFuncVector.size();i++){
+		result = result + _mathFuncVector[i]->calculateResult(_x);
+	}
+
+***********************************/
 class MathFunction{
 	private:
 		string type;       				  //Store the type name of the function
@@ -47,7 +56,9 @@ class MathFunction{
 /******************************************
 
 Example usage:
-	
+	PowerMathFunction func(str2float(coeffStr));
+	func.setPower(str2float(powerStr));
+	mathFuncVector.push_back(&func);
 	
 ******************************************/
 class PowerMathFunction: public MathFunction{
@@ -78,7 +89,9 @@ class PowerMathFunction: public MathFunction{
 /******************************************
 
 Example usage:
-	
+	ServeAsPowerMathFunction func(str2float(coeffStr));
+	func.setBottomNum(str2float(bottomNumStr));
+	mathFuncVector.push_back(&func);
 	
 ******************************************/
 class ServeAsPowerMathFunction: public MathFunction{
@@ -106,12 +119,13 @@ class ServeAsPowerMathFunction: public MathFunction{
 		}
 };
 
-/**********************************************
+/****************************************************
 
 Example usage:
-	
+	SquareRootMathFunction func(str2float(coeffStr));
+	mathFuncVector.push_back(&func);
 
-**********************************************/
+****************************************************/
 class SquareRootMathFunction: public MathFunction{
 	public:
 		SquareRootMathFunction(){}
@@ -134,7 +148,8 @@ class SquareRootMathFunction: public MathFunction{
 /**********************************************
 
 Example usage:
-	
+	SinMathFunction func(str2float(coeffStr));
+	mathFuncVector.push_back(&func);
 
 **********************************************/
 class SinMathFunction: public MathFunction{
@@ -159,7 +174,8 @@ class SinMathFunction: public MathFunction{
 /**********************************************
 
 Example usage:
-	
+	CosMathFunction func(str2float(coeffStr));
+	mathFuncVector.push_back(&func);
 
 **********************************************/
 class CosMathFunction: public MathFunction{
@@ -184,7 +200,8 @@ class CosMathFunction: public MathFunction{
 /**********************************************
 
 Example usage:
-	
+	ExpMathFunction func(str2float(coeffStr));
+	mathFuncVector.push_back(&func);
 
 **********************************************/
 class ExpMathFunction: public MathFunction{
@@ -208,17 +225,32 @@ class ExpMathFunction: public MathFunction{
 /**********************************************
 
 Example usage:
-	float x=M_PI/3;
-	vector<MathFunction*> funcVector2;
-	MultiplyTwoMathFunction multFunc(2);
-	CosMathFunction func5(4);
-	multFunc.functionStore(&func5);
-	PowerMathFunction func6(1);
-	func6.setPower(1);
-	multFunc.functionStore(&func6);
-	funcVector2.push_back(&multFunc);
-	float tmpResult = addTheFunction(x,funcVector2);
-	printf("result = %f\n",tmpResult);
+	Global setting:
+		int isMultiply = 0;
+		string coeffStr;
+		
+	In trigger place:
+		if(isMultiply == 0 && coeffStr != "0"){
+
+			isMultiply = 1;
+			MultiplyTwoMathFunction func(str2float(coeffStr));
+			MathFunction* multFunc = mathFuncVector.back();
+			mathFuncVector.pop_back();
+			func.functionStore(multFunc);
+			mathFuncVector.push_back(&func);
+
+		} else if(isMultiply == 1 && coeffStr == "1"){
+
+			MathFunction* multFunc = mathFuncVector.back();
+			mathFuncVector.pop_back();
+			MathFunction* multMainFunc = mathFuncVector.back();
+			mathFuncVector.pop_back();
+			multMainFunc->functionStore(multFunc);
+			mathFuncVector.push_back(multMainFunc);
+
+		} else if(isMultiply == 1 && coeffStr == "0"){
+			isMultiply = 0;
+		}
 	
 **********************************************/
 class MultiplyTwoMathFunction: public MathFunction{
@@ -246,17 +278,32 @@ class MultiplyTwoMathFunction: public MathFunction{
 /**********************************************
 
 Example usage:
-	float x=M_PI/6;
-	vector<MathFunction*> funcVector2;
-	CalculateAnotherFunctionFirstMathFunction anotherFunc(3);
-	PowerMathFunction func6(2);
-	func6.setPower(1);
-	anotherFunc.functionStore(&func6);
-	CosMathFunction func5(1);
-	anotherFunc.functionStore(&func5);
-	funcVector2.push_back(&anotherFunc);
-	float tmpResult = addTheFunction(x,funcVector2);
-	printf("result = %f\n",tmpResult);
+	Global setting:
+		int isNested;
+		string coeffStr;
+	
+	In trigger place:
+		if(isNested == 0 && coeffStr != "0"){
+
+			isNested = 1;
+			CalculateAnotherFunctionFirstMathFunction func(str2float(coeffStr));
+			MathFunction* nestedFunc = mathFuncVector.back();
+			mathFuncVector.pop_back();
+			func.functionStore(nestedFunc);
+			mathFuncVector.push_back(&func);
+			
+		} else if(isNested == 1 && coeffStr == "1"){
+
+			MathFunction* nestedFunc = mathFuncVector.back();
+			mathFuncVector.pop_back();
+			MathFunction* nestedMainFunc = mathFuncVector.back();
+			mathFuncVector.pop_back();
+			nestedMainFunc->functionStore(nestedFunc);
+			mathFuncVector.push_back(nestedMainFunc);
+
+		} else if(isNested == 1 && coeffStr == "0"){
+			isNested = 0;
+		}
 	
 **********************************************/
 

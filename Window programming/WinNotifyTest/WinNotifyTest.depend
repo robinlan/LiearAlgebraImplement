@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1439652998 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\winnotifytest\main.cpp
+	<tchar.h>
+	<windows.h>
+	<string>
+	"win_widget.h"
+
+1439599197 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\winnotifytest\win_widget.h
+	<windows.h>
+	<string>
+	<map>
+

@@ -1,8 +1,9 @@
 #include <vector>
 #include "math_function.h"
-#include "win_widget.h"
+//#include "win_widget.h"
 using namespace std;
 
+//Get the result(y) with input variable(x) into function
 float getFuncsResult(float _x, vector<MathFunction*> _mathFuncVector){
 	
 	float result = 0.0;
@@ -13,6 +14,7 @@ float getFuncsResult(float _x, vector<MathFunction*> _mathFuncVector){
 	
 }
 
+//Use binary search to search for solution in a specific range
 float bisectionSearchForOneRoot(float _startPoint, float _endPoint, float _tolError, int _maxIteNum, vector<MathFunction*> _mathFuncVector){
 	
 	/*Declare: counter, Start point value, the Root position*/

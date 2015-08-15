@@ -5,36 +5,30 @@
 #endif
 
 #include <tchar.h>
-#include "res/win_widget.h"
-#include "gnuplot_typer_panels.h"
-#include "root_finding_panels.h"
-#include "typer_panels.h"
+#include <windows.h>
+#include <stdlib.h>
+#include <string>
+#include "win_widget.h"
 
-#define IDC_FINDROOT_BUTTON 101
-#define IDC_CALLPLOT_BUTTON 102
-#define IDC_EXIT_BUTTON     103
-#define IDC_TYPER_BUTTON    104
-
-using namespace std;
+#define IDC_MAIN_BUTTON 101
+#define IDC_SETTING_BUTTON_1  102
+#define IDC_SETTING_EDITBOX_1 103
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
-
-/*  Global declaration of child windows  */
-static HWND rootFindingHwnd;
-static HWND GNUPlotTyperHwnd;
-static HWND TyperHwnd;
-int nGlobCmdShow;
+LRESULT CALLBACK EditableWindowProcedure(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
 /*  Make the class name into a global variable  */
 TCHAR szClassName[ ] = _T("CodeBlocksWindowsApp");
+
+HWND settingHwnd;
+HWND mainHwnd;               /* This is the handle for our window */
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR lpszArgument,
                      int nCmdShow)
 {
-    HWND hwnd;               /* This is the handle for our window */
     MSG messages;            /* Here messages to the application are saved */
     WNDCLASSEX wincl;        /* Data structure for the windowclass */
 
@@ -55,14 +49,12 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     /* Use Windows's default colour as the background of the window */
     wincl.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
 
-	nGlobCmdShow = nCmdShow;
-
     /* Register the window class, and if it fails quit the program */
     if (!RegisterClassEx (&wincl))
         return 0;
 
     /* The class is registered, let's create the program*/
-    hwnd = CreateWindowEx (
+    mainHwnd = CreateWindowEx (
            0,                   /* Extended possibilites for variation */
            szClassName,         /* Classname */
            _T("Code::Blocks Template Windows App"),       /* Title Text */
@@ -77,33 +69,15 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
            NULL                 /* No Window Creation data */
            );
 
-	/*  COnstruct child windows  */
-	TCHAR szRootFindingAppName[] = TEXT("RootFindingApp") ;
-	TCHAR rootFindingSzClassName[ ] = _T("root_finding_app");
-	WinWindows wincRootFindingObject(rootFindingSzClassName,hThisInstance,SW_SHOWDEFAULT);
-	WNDCLASSEX wincRootFinding = wincRootFindingObject.getWinClass(RootFindingWindowProcedure);
-	if( !wincRootFindingObject.getWinRegisterClass())
+	TCHAR settingSzClassName[ ] = _T("Some_text_here");
+	WinWindows wincSettingObject(settingSzClassName,hThisInstance,SW_SHOWDEFAULT);
+	WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure);
+	if( !wincSettingObject.getWinRegisterClass())
 		return 0;
-	rootFindingHwnd = wincRootFindingObject.getWinHWND(694,575,_T("Root Finding App"));
-
-	TCHAR szGNUPlotTyperAppName[] = TEXT("GNUPlotTyper") ;
-	TCHAR GNUPlotTyperSzClassName[ ] = _T("GNUPlot_typer");
-	WinWindows wincGNUPlotTyperObject(GNUPlotTyperSzClassName,hThisInstance,SW_SHOWDEFAULT);
-	WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure);
-	if( !wincGNUPlotTyperObject.getWinRegisterClass())
-		return 0;
-	GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer"));
-
-	TCHAR szTyperAppName[] = TEXT("Typer") ;
-	TCHAR TyperSzClassName[ ] = _T("Typer");
-	WinWindows wincTyperObject(TyperSzClassName,hThisInstance,SW_SHOWDEFAULT);
-	WNDCLASSEX wincTyper = wincTyperObject.getWinClass(TyperWindowProcedure);
-	if( !wincTyperObject.getWinRegisterClass())
-		return 0;
-	TyperHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer"));
+	settingHwnd = wincSettingObject.getWinHWND(250,100,_T("Setting"));
 
     /* Make the window visible on the screen */
-    ShowWindow (hwnd, nCmdShow);
+    ShowWindow (mainHwnd, nCmdShow);
 
     /* Run the message loop. It will run until GetMessage() returns 0 */
     while (GetMessage (&messages, NULL, 0, 0))
@@ -123,54 +97,29 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    HDC hdc;
-    PAINTSTRUCT ps;
 
     switch (message)                  /* handle the messages */
     {
-        case WM_CREATE:{
-            WinButton findRootButton("Find Root",50,100,100,24,hwnd,(HMENU)IDC_FINDROOT_BUTTON);
-            HWND button1 = findRootButton.getButton();
-            WinButton callGNUPlotButton("Call GNUPlot",50,150,100,24,hwnd,(HMENU)IDC_CALLPLOT_BUTTON);
-            HWND button2 = callGNUPlotButton.getButton();
-            WinButton exitButton("Exit",50,250,100,24,hwnd,(HMENU)IDC_EXIT_BUTTON);
-            HWND button3 = exitButton.getButton();
-            WinButton typerButton("Typer",50,200,100,24,hwnd,(HMENU)IDC_TYPER_BUTTON);
-            HWND button4 = typerButton.getButton();
+        case WM_CREATE: {
+            WinButton button1("GO",10,10,80,24,hwnd,(HMENU)IDC_MAIN_BUTTON);
+			HWND hbutton = button1.getButton();
             break;
         }
-        case WM_COMMAND:{
-            switch(LOWORD(wParam)){
-
-                case IDC_FINDROOT_BUTTON: {
-					ShowWindow (rootFindingHwnd, nGlobCmdShow);
-                    break;
-                }
-                case IDC_CALLPLOT_BUTTON: {
-					ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
-                    break;
-                }
-                case IDC_EXIT_BUTTON: {
-                    PostQuitMessage (0);
-                    break;
-                }
-                case IDC_TYPER_BUTTON: {
-					ShowWindow (TyperHwnd, nGlobCmdShow);
-                    break;
-                }
-
-            }
+        case WM_COMMAND: {
+            switch(LOWORD(wParam)) {
+				case IDC_MAIN_BUTTON: {
+					ShowWindow (settingHwnd, SW_SHOWDEFAULT);
+					char cName[256];
+                    GetClassName(hwnd, cName, 256);
+					SendMessage (settingHwnd, WM_NOTIFY, 0, (LPARAM)cName);
+				}
+				break;
+			}
             break;
         }
-        case WM_PAINT:{
-            hdc = BeginPaint(hwnd,&ps);
-            string tmp1("Numerical Analysis 5th edit,                          ");
-            string tmp2("    chapter 2-1: bisection search program,     ");
-            string tmp3("                              by Robin Lan, 2015/08/13");
-            TextOut(hdc,50,20,tmp1.c_str(),tmp1.length());
-            TextOut(hdc,50,35,tmp2.c_str(),tmp2.length());
-            TextOut(hdc,50,50,tmp3.c_str(),tmp3.length());
-            EndPaint (hwnd,&ps) ;
+        case WM_NOTIFY: {
+            string tmp((char*)lParam);
+            showMessage(tmp);
             break;
         }
         case WM_DESTROY:
@@ -181,4 +130,64 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     }
 
     return 0;
+}
+
+LRESULT CALLBACK EditableWindowProcedure(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
+
+	static HWND prevHwnd;
+	static HWND hSettingEdit1;
+	static string resultString1;
+	static TCHAR* targetWinName;
+
+	switch(Message) {
+
+		case WM_CREATE: {
+			// Create an edit box
+			WinButton button1("OK",10,10,80,24,hwnd,(HMENU)IDC_SETTING_BUTTON_1);
+			HWND hbutton = button1.getButton();
+			WinEditbox editbox1("",110,10,80,24,hwnd,(HMENU)IDC_SETTING_EDITBOX_1);
+			hSettingEdit1 = editbox1.getEditbox();
+			break;
+		}
+
+		case WM_COMMAND: {
+
+			switch(LOWORD(wParam)) {
+
+				case IDC_SETTING_BUTTON_1:
+				{
+					char buffer[256];
+					SendMessage(hSettingEdit1,
+						WM_GETTEXT,
+						sizeof(buffer)/sizeof(buffer[0]),
+						reinterpret_cast<LPARAM>(buffer));
+					string tmp(buffer);
+					resultString1 = tmp;
+					SendMessage(prevHwnd, WM_NOTIFY, 0, (LPARAM)tmp.c_str());
+				}
+				break;
+
+			}
+
+			break;
+		}
+
+		case WM_NOTIFY: {
+            string tmp((char*)lParam);
+            targetWinName = _T((char*)lParam);
+            prevHwnd = FindWindow(targetWinName,0);
+            break;
+		}
+
+		/* Upon destruction, tell the main thread to stop */
+		case WM_CLOSE: {
+			ShowWindow(hwnd, SW_HIDE);
+			break;
+		}
+
+		/* All other messages (a lot of them) are processed using default procedures */
+		default:
+			return DefWindowProc(hwnd, Message, wParam, lParam);
+	}
+	return 0;
 }

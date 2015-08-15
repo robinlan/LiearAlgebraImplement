@@ -2,21 +2,22 @@
 root_finding_panels.h, by Robin Lan - 2015/08/12
 				
 Example usage:
-	Global setting:
-		HWND rootfindingHwnd;
-		TCHAR szClassNameRF[ ] = _T("RootFindingPanel");
-		int nGlobCmdShow;
+	Include:
+		res/win_widget.h
 	
-	In WinMain:
-		WinWindows wincRFObject(szClassNameRF,hThisInstance,nCmdShow);
-		WNDCLASSEX wincRF = wincRFObject.getWinClass(RootFindingWindowProcedure);
-		nGlobCmdShow = nCmdShow;
-		if( !wincRFObject.getWinRegisterClass())
+	Global setting:
+		HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
+		TCHAR szRootFindingAppName[] = TEXT("RootFindingApp") ;
+		HWND RootFindingHwnd;
+		TCHAR RootFindingSzClassName[ ] = _T("Root_finding");
+		WinWindows wincRootFindingObject(RootFindingSzClassName,hFatherInstance,SW_SHOWDEFAULT);
+		WNDCLASSEX wincRootFinding = wincRootFindingObject.getWinClass(RootFindingWindowProcedure2);
+		if( !wincRootFindingObject.getWinRegisterClass())
 			return 0;
-		rootfindingHwnd = wincRFObject.getWinHWND(694,575,_T("Root finding Panel"));
-		
+		RootFindingHwnd = wincRootFindingObject.getWinHWND(444,275,_T("Root Finding App"));
+	
 	In trigger place:
-		ShowWindow (rootfindingHwnd, nGlobCmdShow);
+		ShowWindow (RootFindingHwnd, nGlobCmdShow);
 				
 ********************************************************************************/
 
@@ -28,6 +29,7 @@ Example usage:
 
 #include <tchar.h>
 #include <string>
+#include "editable_window1.h"
 #include "res/numeric_algorithms.h"
 
 #define IDC_SETTING_BUTTON				101		// SETTING button identifier
@@ -59,10 +61,13 @@ Example usage:
 #define IDC_NESTEDFUNC_BUTTON			127		// Nested function button identifier
 #define IDC_NESTEDFUNC_EDITBOX			128		// Nested function edit box identifier
 #define IDC_BACK_BUTTON					129		// Back button identifier
+#define IDC_SETTING_ALGORITHM			130		// Main menu bar setting->algorithm string identifier
 
 #define MAXNUM_PER_FUNC			50		// Store the maximum number of function per type
 
 using namespace std;
+
+LRESULT CALLBACK EditableWindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
 /*  This function is called by the Windows function DispatchMessage()  */
 
@@ -95,6 +100,9 @@ LRESULT CALLBACK RootFindingWindowProcedure (HWND hwnd, UINT message, WPARAM wPa
 
 	static string resultRootStr;								 //To display the root finding result
 
+	static WinMenu mainMenu;									 //The main menu bar object
+	static HMENU hMenu;											 //The main menu bar
+	
 	static int powerFuncNum;									 						//Store power function number
 	static PowerMathFunction powerFuncArray[MAXNUM_PER_FUNC];   						//Store power function objects
 	static int serveAsPowerFuncNum;									 					//Store serveAsPower function number
@@ -114,12 +122,22 @@ LRESULT CALLBACK RootFindingWindowProcedure (HWND hwnd, UINT message, WPARAM wPa
 	static int nestedFuncNum;										 					//Store nested function number
 	static CalculateAnotherFunctionFirstMathFunction nestedFuncArray[MAXNUM_PER_FUNC];  //Store nested function objects
 	
+	static HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
+	
+	static HWND algorithmHWND;
+	static string algorithmType;
+	
 	HDC hdc;
 	PAINTSTRUCT ps;
 
 	switch (message) {                 /* handle the messages */
         case WM_CREATE: {
 
+			mainMenu.insertStrOptions(IDC_SETTING_ALGORITHM,TEXT("Root-finding algorithm"),1);
+		    mainMenu.linkPopupMenuToMainMenu(TEXT("Setting"),1);
+		    hMenu = mainMenu.getMainMenu();
+		    SetMenu(hwnd, hMenu);
+			
 			funcStr = "Function: ";
 
 			powerFuncNum = 0;
@@ -251,8 +269,17 @@ LRESULT CALLBACK RootFindingWindowProcedure (HWND hwnd, UINT message, WPARAM wPa
 			
 			WinButton buttonBack("BACK",290,490,100,24,hwnd,(HMENU)IDC_BACK_BUTTON);
 			HWND hbuttonBack = buttonBack.getButton();
-
-
+			
+			
+			
+			TCHAR settingSzClassName[ ] = _T("Algorithm_setting");
+			WinWindows wincSettingObject(settingSzClassName,hFatherInstance,SW_SHOWDEFAULT);
+			WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure1);
+			if( !wincSettingObject.getWinRegisterClass())
+				return 0;
+			algorithmHWND = wincSettingObject.getWinHWND(250,100,_T("Setting"));
+			
+			
 
 			break;
 		}
@@ -559,6 +586,15 @@ LRESULT CALLBACK RootFindingWindowProcedure (HWND hwnd, UINT message, WPARAM wPa
 					
 					break;
 				}
+				
+				case IDC_SETTING_ALGORITHM: {
+					//Setting algorithm here
+					ShowWindow (algorithmHWND, SW_SHOWDEFAULT);
+					char cName[256];
+					GetClassName(hwnd, cName, 256);
+					SendMessage (algorithmHWND, WM_NOTIFY, 0, (LPARAM)cName);
+					break;
+				}
 
 			}
 
@@ -595,6 +631,13 @@ LRESULT CALLBACK RootFindingWindowProcedure (HWND hwnd, UINT message, WPARAM wPa
 
 			break;
 
+		}
+		
+		case WM_NOTIFY: {
+            string tmp((char*)lParam);
+			algorithmType = tmp;
+            showMessage(algorithmType);
+            break;
 		}
 
 		case WM_CLOSE:
