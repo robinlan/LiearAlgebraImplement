@@ -7,13 +7,14 @@ using namespace std;
 
 Example usage:
 	In trigger function:
+		static HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
 		TCHAR settingSzClassName[ ] = _T("Address_setting");
 		WinWindows wincSettingObject(settingSzClassName,hFatherInstance,SW_SHOWDEFAULT);
 		WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure2);
 		if( !wincSettingObject.getWinRegisterClass())
 			return 0;
 		addressHWND = wincSettingObject.getWinHWND(250,100,_T("Setting"));
-	
+
 	In some WinProc function that trigger the window:
 		ShowWindow (addressHWND, nGlobCmdShow);
 
@@ -35,7 +36,7 @@ class WinWindows{
 		}
 		/*Access and construct the WNDCLASSEX object with WINPROC object*/
 		WNDCLASSEX getWinClass(WNDPROC _winProc){
-			
+
 			/* The Window structure */
 			winc.hInstance = hThisInstance;
 			winc.lpszClassName = szClassName;
@@ -50,22 +51,22 @@ class WinWindows{
 			winc.lpszMenuName = NULL;                 /* No menu */
 			winc.cbClsExtra = 0;                      /* No extra bytes after the window class */
 			winc.cbWndExtra = 0;                      /* structure or the window instance */
-			
+
 			/* Use Windows's default colour as the background of the window */
 			winc.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
-			
+
 			return winc;
 		}
 		/*Access RegisterClassEx ATOM return value*/
 		ATOM getWinRegisterClass(){
-			
+
 			ATOM isRegister = RegisterClassEx(&winc);
 			return isRegister;
-			
+
 		}
 		/*Access the HWND object*/
 		HWND getWinHWND(int _length,int _width,LPCTSTR _lpWindowName){
-			
+
 			hwnd = CreateWindowEx (
 				0,                   									/* Extended possibilites for variation */
 				szClassName,         									/* Classname */
@@ -80,7 +81,7 @@ class WinWindows{
 				hThisInstance,										    /* Program Instance handler */
 				NULL                 									/* No Window Creation data */
 				);
-			
+
 			return hwnd;
 		}
 };
@@ -90,14 +91,14 @@ class WinWindows{
 Example usage in WM_CREATE:
 	WinButton button1("OK",50,220,100,24,hwnd,(HMENU)IDC_MAIN_BUTTON);
 	HWND hbutton = button1.getButton();
-	
+
 *********************************************************************/
 class WinButton{
 	private:
 		HWND winButton;                 //The real button object
 	public:
 		WinButton(){}
-		
+
 		/*Create a button with button text, x, y, width, height, father window object*/
 		WinButton(LPCTSTR _text,        //Text content on the button
 				  int _x,
@@ -106,7 +107,7 @@ class WinButton{
 				  int _height,
 				  HWND _parentWindow,   //Father window
 				  HMENU _childMark) {   //Mark number of the button
-			
+
 			winButton = CreateWindowEx(NULL,
 				"BUTTON",
 				_text,
@@ -120,27 +121,27 @@ class WinButton{
 				_childMark,
 				GetModuleHandle(NULL),
 				NULL);
-			
+
 			/*Set default font*/
 			HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 			SendMessage(winButton,
 				WM_SETFONT,
 				(WPARAM)hfDefault,
 				MAKELPARAM(FALSE,0));
-			
+
 		}
-		
+
 		/*Set the button text font*/
 		void setFont(int _fontType){
-			
+
 			HGDIOBJ hfDefault=GetStockObject(_fontType);
 			SendMessage(winButton,
 				WM_SETFONT,
 				(WPARAM)hfDefault,
 				MAKELPARAM(FALSE,0));
-			
+
 		}
-		
+
 		/*Access the button object*/
 		HWND getButton(){
 			return winButton;
@@ -156,7 +157,7 @@ Example usage in WM_CREATE:
 or to get the content:
 	WinEditbox editbox1(hEdit1);
 	string coeffStr = editbox1.getEditboxContent();
-	
+
 ***********************************************************************/
 class WinEditbox{
 	private:
@@ -175,7 +176,7 @@ class WinEditbox{
 				   int _height,
 				   HWND _parentWindow,   //Father window
 				   HMENU _childMark) {   //Mark number of the edit box
-			
+
 			winEditbox = CreateWindowEx(WS_EX_CLIENTEDGE,
 				"EDIT",
 				_text,
@@ -189,27 +190,27 @@ class WinEditbox{
 				_childMark,
 				GetModuleHandle(NULL),
 				NULL);
-			
+
 			/*Set default font*/
 			HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
 			SendMessage(winEditbox,
 				WM_SETFONT,
 				(WPARAM)hfDefault,
 				MAKELPARAM(FALSE,0));
-			
+
 		}
-		
+
 		/*Set the button text font*/
 		void setFont(int _fontType){
-			
+
 			HGDIOBJ hfDefault=GetStockObject(_fontType);
 			SendMessage(winEditbox,
 				WM_SETFONT,
 				(WPARAM)hfDefault,
 				MAKELPARAM(FALSE,0));
-			
+
 		}
-		
+
 		/*Set the text inside edit box*/
 		void setEditboxText(LPARAM _text){
 			SendMessage(winEditbox,
@@ -217,21 +218,21 @@ class WinEditbox{
 				NULL,
 				_text);
 		}
-		
+
 		/*Access edit box content*/
 		string getEditboxContent(){
-			
+
 			char tmpBuffer[256];
 			SendMessage(winEditbox,
 				WM_GETTEXT,
 				sizeof(tmpBuffer)/sizeof(tmpBuffer[0]),
 				reinterpret_cast<LPARAM>(tmpBuffer));
-				
+
 			string tmpStr(tmpBuffer);
 			return tmpStr;
-			
+
 		}
-		
+
 		/*Access the edit box object*/
 		HWND getEditbox(){
 			return winEditbox;

@@ -41,13 +41,14 @@
 	<windows.h>
 	<string>
 
-1439612926 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\main.cpp
+1439656863 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\main.cpp
 	<tchar.h>
 	"res/win_widget.h"
 	"gnuplot_typer_panels.h"
 	"root_finding_panels.h"
+	"typer_panels.h"
 
-1439654317 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\gnuplot_typer_panels.h
+1439654775 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\gnuplot_typer_panels.h
 	<tchar.h>
 	<stdio.h>
 	<string>
@@ -55,22 +56,22 @@
 	"editable_window2.h"
 	"res/gnu_plotter.h"
 
-1439470003 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\gnu_plotter.h
+1439655339 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\gnu_plotter.h
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
 
-1439654041 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\root_finding_panels.h
+1439654762 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\root_finding_panels.h
 	<tchar.h>
 	<string>
 	"editable_window1.h"
 	"res/numeric_algorithms.h"
 
-1439600086 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\numeric_algorithms.h
+1439655298 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\numeric_algorithms.h
 	<vector>
 	"math_function.h"
 
-1439467134 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\math_function.h
+1439656023 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\math_function.h
 	<iostream>
 	<vector>
 	<math.h>
@@ -81,7 +82,7 @@
 	<ostream>
 	<string>
 
-1439599197 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\win_widget.h
+1439657325 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\res\win_widget.h
 	<windows.h>
 	<string>
 	<map>
@@ -89,11 +90,22 @@
 1439610122 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\editable_window.h
 	<windows.h>
 
-1439654301 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\editable_window2.h
+1439654984 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\editable_window2.h
 	<windows.h>
 	<string>
 
-1439654146 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\editable_window1.h
+1439654998 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\editable_window1.h
+	<windows.h>
+	<string>
+
+1439657284 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\typer_panels.h
+	<tchar.h>
+	<stdio.h>
+	<string>
+	<vector>
+	"editable_window3.h"
+
+1439656496 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\editable_window3.h
 	<windows.h>
 	<string>
 

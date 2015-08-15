@@ -4,7 +4,7 @@ typer_panels.h, by Robin Lan - 2015/08/12
 Example usage:
 	Include:
 		res/win_widget.h
-	
+
 	Global setting:
 		HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
 		TCHAR szTyperAppName[] = TEXT("Typer") ;
@@ -15,7 +15,7 @@ Example usage:
 		if( !wincTyperObject.getWinRegisterClass())
 			return 0;
 		TyperHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer"));
-	
+
 	In trigger place:
 		ShowWindow (TyperHwnd, nGlobCmdShow);
 
@@ -44,7 +44,7 @@ LRESULT CALLBACK EditableWindowProcedure (HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
      static HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
-	 
+
 	 static WinMenu mainMenu;
 	 static HMENU hMenu;
 
@@ -56,7 +56,7 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 	 static string order = "";   //Store the order every line
 	 static vector<string> orderVector;
 	 static int curOrderNum = 0;
-	 
+
 	 static string address;
 	 static HWND addressHWND;
 
@@ -71,14 +71,14 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
           dwCharSet = wParam ;
 
      case WM_CREATE: {
-				 
+
 		  TCHAR settingSzClassName[ ] = _T("setting");
 		  WinWindows wincSettingObject(settingSzClassName,hFatherInstance,SW_SHOWDEFAULT);
-		  WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure2);
+		  WNDCLASSEX wincSetting = wincSettingObject.getWinClass(EditableWindowProcedure3);
 		  if( !wincSettingObject.getWinRegisterClass())
 		  	  return 0;
 		  addressHWND = wincSettingObject.getWinHWND(250,100,_T("Setting"));
-		  
+
 		  mainMenu.insertStrOptions(IDC_SETTING_ADDRESS,TEXT("address"),1);
 		  mainMenu.linkPopupMenuToMainMenu(TEXT("Setting"),1);
 		  hMenu = mainMenu.getMainMenu();
@@ -130,11 +130,11 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 
           InvalidateRect (hwnd, NULL, TRUE) ;
           return 0 ;
-		  
+
 	 case WM_COMMAND: {
-		 
+
 		 switch(LOWORD(wParam)){
-			 
+
 			 case IDC_SETTING_ADDRESS: {
 				 ShowWindow (addressHWND, SW_SHOWDEFAULT);
 				 char cName[256];
@@ -142,9 +142,9 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 				 SendMessage (addressHWND, WM_NOTIFY, 0, (LPARAM)cName);
 				 break;
 			 }
-			 
+
 		 }
-		 
+
 		 return 0;
 	 }
 
@@ -360,7 +360,7 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
           DeleteObject (SelectObject (hdc, GetStockObject (SYSTEM_FONT))) ;
           EndPaint (hwnd, &ps) ;
           return 0 ;
-		  
+
 	 case WM_NOTIFY: {
 			string tmp((char*)lParam);
 			address = tmp;
