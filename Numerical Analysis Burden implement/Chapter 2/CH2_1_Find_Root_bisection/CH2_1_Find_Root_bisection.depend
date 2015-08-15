@@ -48,7 +48,7 @@
 	"root_finding_panels.h"
 	"typer_panels.h"
 
-1439654775 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\gnuplot_typer_panels.h
+1439657791 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\gnuplot_typer_panels.h
 	<tchar.h>
 	<stdio.h>
 	<string>
@@ -98,7 +98,7 @@
 	<windows.h>
 	<string>
 
-1439657284 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\typer_panels.h
+1439657800 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\chapter 2\ch2_1_find_root_bisection\typer_panels.h
 	<tchar.h>
 	<stdio.h>
 	<string>

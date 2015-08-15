@@ -180,18 +180,22 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
 
 		  case VK_UP:{
 
-                char* tmpCharArray = const_cast<char*>(orderVector.at(curOrderNum-1).c_str());
-
 				for (x = 0 ; x < cxBuffer ; x++)
                     BUFFER (x, yCaret) =  ' ';
-
-				for (x = 0 ; x < orderVector.at(curOrderNum-1).length() ; x++)
+				
+				if(curOrderNum > 0){
+					char* tmpCharArray = const_cast<char*>(orderVector.at(curOrderNum-1).c_str());
+					
+					for (x = 0 ; x < orderVector.at(curOrderNum-1).length() ; x++)
                     BUFFER (x, yCaret) =  *(tmpCharArray+x);
 
-				order = orderVector.at(curOrderNum-1);
-				xCaret = orderVector.at(curOrderNum-1).length();
-
-				if(curOrderNum > 0)curOrderNum = curOrderNum - 1;
+					order = orderVector.at(curOrderNum-1);
+					xCaret = orderVector.at(curOrderNum-1).length();
+					
+					curOrderNum = curOrderNum - 1;
+				} else {
+					xCaret = 0;
+				}
 
                 HideCaret (hwnd) ;
                 hdc = GetDC (hwnd) ;
