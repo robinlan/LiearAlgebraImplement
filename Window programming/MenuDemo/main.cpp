@@ -117,8 +117,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         thirdPopupMenu.linkPopupMenuToMainMenu(TEXT("About"),1);
 
         thirdPopupMenu.createPopupMenu();
-        thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYSELF,TEXT("Black"),2);
-        thirdPopupMenu.insertStrOptions(IDM_ABOUT_MYFAMILY,TEXT("White"),2);
+        thirdPopupMenu.insertStrOptions(IDM_VIEW_BLACK,TEXT("Black"),2);
+        thirdPopupMenu.insertStrOptions(IDM_VIEW_WHITE,TEXT("White"),2);
         thirdPopupMenu.linkPopupMenuToMainMenu(TEXT("View"),2);
 
         hMenu = thirdPopupMenu.getMainMenu();
@@ -130,30 +130,30 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
         switch(LOWORD(wParam)){
 
-            case IDM_FILE_NEW: {
+            case IDM_ABOUT_MYSELF: {
                 MessageBox(NULL,
-						"File->New is called.",
+						"About->Myself is called.",
 						"Information",
 						MB_ICONINFORMATION);
                 break;
             }
-            case IDM_FILE_OPEN: {
+            case IDM_ABOUT_MYFAMILY: {
                 MessageBox(NULL,
-						"File->Open is called.",
+						"About->Myfamily is called.",
 						"Information",
 						MB_ICONINFORMATION);
                 break;
             }
-            case IDM_EDIT_COPY: {
+            case IDM_VIEW_BLACK: {
                 MessageBox(NULL,
-						"Edit->Copy is called.",
+						"View->Black is called.",
 						"Information",
 						MB_ICONINFORMATION);
                 break;
             }
-            case IDM_EDIT_CUT: {
+            case IDM_VIEW_WHITE: {
                 MessageBox(NULL,
-						"Edit->Cut is called.",
+						"View->White is called.",
 						"Information",
 						MB_ICONINFORMATION);
                 break;
