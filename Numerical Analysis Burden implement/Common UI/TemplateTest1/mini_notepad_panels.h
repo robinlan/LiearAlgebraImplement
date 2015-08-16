@@ -1,15 +1,29 @@
-/*---------------------------------------
-   POPPAD.C -- Popup Editor
-               (c) Charles Petzold, 1998
-  ---------------------------------------*/
+/*********************************************************************************
+
+Example usage:
+	Resource file:
+		Confirm that "filename.RC" is the same with register in the window
+		Modify the name before "MENU DISCARDABLE" in "filename.RC"
+	
+	Global setting:
+		static TCHAR szNotepadAppName[] = TEXT ("PopPad") ;
+		static HWND notepadHwnd;
+		HINSTANCE hInstance;
+		LPSTR szCmdLine;
+		int nGlobCmdShow;
+	
+	In trigger place:
+		NotepadWinMain(notepadHwnd,hInstance,szCmdLine,szNotepadAppName,nGlobCmdShow);
+
+*********************************************************************************/
 
 #include <windows.h>
 #include <commdlg.h>
-#include "resource.h"
-#include "PopFile.h"
-#include "PopFont.h"
-#include "PopPrnt.h"
-#include "PopFind.h"
+#include "res/notepad/resource.h"
+#include "res/notepad/PopFile.h"
+#include "res/notepad/PopFont.h"
+#include "res/notepad/PopPrnt.h"
+#include "res/notepad/PopFind.h"
 
 #define EDITID   1
 #define UNTITLED TEXT ("(untitled)")
@@ -17,81 +31,52 @@
 LRESULT CALLBACK NotepadWindowProcedure (HWND, UINT, WPARAM, LPARAM) ;
 BOOL    CALLBACK AboutDlgProc           (HWND, UINT, WPARAM, LPARAM) ;
 
-     // Functions in POPFILE.C
-
-void PopFileInitialize (HWND) ;
-BOOL PopFileOpenDlg    (HWND, PTSTR, PTSTR) ;
-BOOL PopFileSaveDlg    (HWND, PTSTR, PTSTR) ;
-BOOL PopFileRead       (HWND, PTSTR) ;
-BOOL PopFileWrite      (HWND, PTSTR) ;
-
-     // Functions in POPFIND.C
-
-HWND PopFindFindDlg     (HWND) ;
-HWND PopFindReplaceDlg  (HWND) ;
-BOOL PopFindFindText    (HWND, int *, LPFINDREPLACE) ;
-BOOL PopFindReplaceText (HWND, int *, LPFINDREPLACE) ;
-BOOL PopFindNextText    (HWND, int *) ;
-BOOL PopFindValidFind   (void) ;
-
-     // Functions in POPFONT.C
-
-void PopFontInitialize   (HWND) ;
-BOOL PopFontChooseFont   (HWND) ;
-void PopFontSetFont      (HWND) ;
-void PopFontDeinitialize (void) ;
-
-     // Functions in POPPRNT.C
-
-BOOL PopPrntPrintFile (HINSTANCE, HWND, HWND, PTSTR) ;
-
-     // Global variables
-
+TCHAR* szAppName;
 static HWND  hDlgModeless ;
-static TCHAR szAppName[] = TEXT ("PopPad") ;
 
-int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    PSTR szCmdLine, int iCmdShow)
-{
+int WINAPI NotepadWinMain (HWND _notepadHwnd, HINSTANCE hInstance, PSTR szCmdLine, TCHAR* szNotepadName, int iCmdShow) {
+
      MSG       msg ;
-     HWND      hwnd ;
      HACCEL    hAccel ;
-     WNDCLASS  wndclass ;
+	 HWND	   notepadHwnd = _notepadHwnd;
+
+     szAppName = szNotepadName;
+
+	 WNDCLASS  wndclass ;
 
      wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
      wndclass.lpfnWndProc   = NotepadWindowProcedure ;
      wndclass.cbClsExtra    = 0 ;
      wndclass.cbWndExtra    = 0 ;
      wndclass.hInstance     = hInstance ;
-     wndclass.hIcon         = LoadIcon (hInstance, szAppName) ;
+     wndclass.hIcon         = LoadIcon (hInstance, szNotepadName) ;
      wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
      wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
-     wndclass.lpszMenuName  = szAppName ;
-     wndclass.lpszClassName = szAppName ;
+     wndclass.lpszMenuName  = szNotepadName ;
+     wndclass.lpszClassName = szNotepadName ;
 
-     if (!RegisterClass (&wndclass))
-     {
-          MessageBox (NULL, TEXT ("This program requires Windows NT!"),
-                      szAppName, MB_ICONERROR) ;
-          return 0 ;
+     if (!RegisterClass (&wndclass)) {
+         MessageBox (NULL, TEXT ("This program requires Windows NT!"),
+             szNotepadName, MB_ICONERROR) ;
+         return 0 ;
      }
 
-     hwnd = CreateWindow (szAppName, NULL,
-                          WS_OVERLAPPEDWINDOW,
-                          CW_USEDEFAULT, CW_USEDEFAULT,
-                          CW_USEDEFAULT, CW_USEDEFAULT,
-                          NULL, NULL, hInstance, szCmdLine) ;
+     notepadHwnd = CreateWindow (szNotepadName, NULL,
+         WS_OVERLAPPEDWINDOW,
+         CW_USEDEFAULT, CW_USEDEFAULT,
+         CW_USEDEFAULT, CW_USEDEFAULT,
+         NULL, NULL, hInstance, szCmdLine) ;
 
-     ShowWindow (hwnd, iCmdShow) ;
-     UpdateWindow (hwnd) ;
+     ShowWindow (notepadHwnd, iCmdShow) ;
+     UpdateWindow (notepadHwnd) ;
 
-     hAccel = LoadAccelerators (hInstance, szAppName) ;
+     hAccel = LoadAccelerators (hInstance, szNotepadName) ;
 
      while (GetMessage (&msg, NULL, 0, 0))
      {
           if (hDlgModeless == NULL || !IsDialogMessage (hDlgModeless, &msg))
           {
-               if (!TranslateAccelerator (hwnd, hAccel, &msg))
+               if (!TranslateAccelerator (notepadHwnd, hAccel, &msg))
                {
                     TranslateMessage (&msg) ;
                     DispatchMessage (&msg) ;

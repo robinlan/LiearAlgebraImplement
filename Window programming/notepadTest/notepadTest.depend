@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1439709895 source:c:\users\administrator\desktop\notepadtest\main.cpp
+	<tchar.h>
+	<windows.h>
+	"win_widget.h"
+	"mini_notepad_panels.h"
+
+1439599197 c:\users\administrator\desktop\notepadtest\win_widget.h
+	<windows.h>
+	<string>
+	<map>
+
+1439709135 c:\users\administrator\desktop\notepadtest\mini_notepad_panels.h
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+	"PopFile.h"
+	"PopFont.h"
+	"PopPrnt.h"
+	"PopFind.h"
+
+907930800 c:\users\administrator\desktop\notepadtest\resource.h
+
+1439705833 c:\users\administrator\desktop\notepadtest\popfile.h
+	<windows.h>
+	<commdlg.h>
+
+1439705872 c:\users\administrator\desktop\notepadtest\popfont.h
+	<windows.h>
+	<commdlg.h>
+
+1439705990 c:\users\administrator\desktop\notepadtest\popprnt.h
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+
+1439706020 c:\users\administrator\desktop\notepadtest\popfind.h
+	<windows.h>
+	<commdlg.h>
+	<tchar.h>
+
+907930800 source:c:\users\administrator\desktop\notepadtest\poppad.rc
+	"resource.h"
+	"afxres.h"
+

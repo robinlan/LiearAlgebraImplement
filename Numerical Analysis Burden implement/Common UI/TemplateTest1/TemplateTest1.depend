@@ -1,0 +1,83 @@
+# depslib dependency file v1.0
+1439726096 source:c:\users\administrator\desktop\templatetest1\main.cpp
+	<tchar.h>
+	<windows.h>
+	"res/win_widget.h"
+	"typer_panels.h"
+	"root_finding_panels.h"
+	"mini_notepad_panels.h"
+
+1439657325 c:\users\administrator\desktop\templatetest1\res\win_widget.h
+	<windows.h>
+	<string>
+	<map>
+
+1439722526 c:\users\administrator\desktop\templatetest1\mini_notepad_panels.h
+	<windows.h>
+	<commdlg.h>
+	"res/notepad/resource.h"
+	"res/notepad/PopFile.h"
+	"res/notepad/PopFont.h"
+	"res/notepad/PopPrnt.h"
+	"res/notepad/PopFind.h"
+
+907930800 c:\users\administrator\desktop\templatetest1\res\notepad\resource.h
+
+1439705833 c:\users\administrator\desktop\templatetest1\res\notepad\popfile.h
+	<windows.h>
+	<commdlg.h>
+
+1439705872 c:\users\administrator\desktop\templatetest1\res\notepad\popfont.h
+	<windows.h>
+	<commdlg.h>
+
+1439705990 c:\users\administrator\desktop\templatetest1\res\notepad\popprnt.h
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+
+1439706020 c:\users\administrator\desktop\templatetest1\res\notepad\popfind.h
+	<windows.h>
+	<commdlg.h>
+	<tchar.h>
+
+1439714451 source:c:\users\administrator\desktop\templatetest1\res\notepad\mininotepad.rc
+	"resource.h"
+	"afxres.h"
+
+1439721954 c:\users\administrator\desktop\templatetest1\typer_panels.h
+	<tchar.h>
+	<stdio.h>
+	<string>
+	<vector>
+	"editable_window3.h"
+
+1439656496 c:\users\administrator\desktop\templatetest1\editable_window3.h
+	<windows.h>
+	<string>
+
+1439726145 c:\users\administrator\desktop\templatetest1\root_finding_panels.h
+	<tchar.h>
+	<string>
+	"editable_window1.h"
+	"res/numeric_algorithms.h"
+
+1439654998 c:\users\administrator\desktop\templatetest1\editable_window1.h
+	<windows.h>
+	<string>
+
+1439655298 c:\users\administrator\desktop\templatetest1\res\numeric_algorithms.h
+	<vector>
+	"math_function.h"
+
+1439656023 c:\users\administrator\desktop\templatetest1\res\math_function.h
+	<iostream>
+	<vector>
+	<math.h>
+	"type_convert.h"
+
+1439467134 c:\users\administrator\desktop\templatetest1\res\type_convert.h
+	<sstream>
+	<ostream>
+	<string>
+

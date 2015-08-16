@@ -50,3 +50,36 @@
 	<commdlg.h>
 	<tchar.h>
 
+907930800 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\poppad.rc
+	"resource.h"
+	"afxres.h"
+
+907930800 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\resource.h
+
+1439707089 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\main.cpp
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+	"PopFile.h"
+	"PopFont.h"
+	"PopPrnt.h"
+	"PopFind.h"
+
+1439705833 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\popfile.h
+	<windows.h>
+	<commdlg.h>
+
+1439705872 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\popfont.h
+	<windows.h>
+	<commdlg.h>
+
+1439705990 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\popprnt.h
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+
+1439706020 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\mininotepad\popfind.h
+	<windows.h>
+	<commdlg.h>
+	<tchar.h>
+
