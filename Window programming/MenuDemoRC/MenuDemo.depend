@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1439695874 source:c:\users\administrator\desktop\menudemo\main.cpp
+	<tchar.h>
+	<windows.h>
+	"resource.h"
+
+907930800 c:\users\administrator\desktop\menudemo\resource.h
+
+907930800 source:c:\users\administrator\desktop\menudemo\menudemo.rc
+	"resource.h"
+	"afxres.h"
+
+1439696394 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\menudemorc\main.cpp
+	<tchar.h>
+	<windows.h>
+	"resource.h"
+
+907930800 c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\menudemorc\resource.h
+
+907930800 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\window programming\menudemorc\menudemo.rc
+	"resource.h"
+	"afxres.h"
+

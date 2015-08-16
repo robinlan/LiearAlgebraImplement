@@ -1,0 +1,52 @@
+# depslib dependency file v1.0
+1439706034 source:c:\users\administrator\desktop\mininotepad\main.cpp
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+	"PopFile.h"
+	"PopFont.h"
+	"PopPrnt.h"
+	"PopFind.h"
+
+1253857304 source:c:\users\administrator\desktop\mininotepad\popfind.c
+	<windows.h>
+	<commdlg.h>
+	<tchar.h>
+
+1253857304 source:c:\users\administrator\desktop\mininotepad\popfont.c
+	<windows.h>
+	<commdlg.h>
+
+907930800 source:c:\users\administrator\desktop\mininotepad\poppad.rc
+	"resource.h"
+	"afxres.h"
+
+907930800 c:\users\administrator\desktop\mininotepad\resource.h
+
+1253857304 source:c:\users\administrator\desktop\mininotepad\popprnt.c
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+
+1439705462 source:c:\users\administrator\desktop\mininotepad\popfile.c
+	<windows.h>
+	<commdlg.h>
+
+1439705833 c:\users\administrator\desktop\mininotepad\popfile.h
+	<windows.h>
+	<commdlg.h>
+
+1439705872 c:\users\administrator\desktop\mininotepad\popfont.h
+	<windows.h>
+	<commdlg.h>
+
+1439705990 c:\users\administrator\desktop\mininotepad\popprnt.h
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+
+1439706020 c:\users\administrator\desktop\mininotepad\popfind.h
+	<windows.h>
+	<commdlg.h>
+	<tchar.h>
+
