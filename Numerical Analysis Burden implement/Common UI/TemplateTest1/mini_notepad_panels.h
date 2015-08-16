@@ -6,14 +6,13 @@ Example usage:
 		Modify the name before "MENU DISCARDABLE" in "filename.RC"
 	
 	Global setting:
-		static TCHAR szNotepadAppName[] = TEXT ("PopPad") ;
-		static HWND notepadHwnd;
-		HINSTANCE hInstance;
-		LPSTR szCmdLine;
-		int nGlobCmdShow;
+		HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
+		TCHAR szNotepadAppName[] = TEXT("Notepad") ;
+		HWND NotepadHwnd;
+		notepadHwnd = createNotepadWindow(hInstance,szNotepadAppName);
 	
 	In trigger place:
-		NotepadWinMain(notepadHwnd,hInstance,szCmdLine,szNotepadAppName,nGlobCmdShow);
+		ShowWindow (notepadHwnd, nGlobCmdShow);
 
 *********************************************************************************/
 
@@ -31,52 +30,68 @@ Example usage:
 LRESULT CALLBACK NotepadWindowProcedure (HWND, UINT, WPARAM, LPARAM) ;
 BOOL    CALLBACK AboutDlgProc           (HWND, UINT, WPARAM, LPARAM) ;
 
-TCHAR* szAppName;
-static HWND  hDlgModeless ;
+static TCHAR* szAppName;
+static HINSTANCE hNotepadInstance;
+static HWND notepadAppHwnd;
+static HWND hDlgModeless ;
 
-int WINAPI NotepadWinMain (HWND _notepadHwnd, HINSTANCE hInstance, PSTR szCmdLine, TCHAR* szNotepadName, int iCmdShow) {
+HWND createNotepadWindow(HINSTANCE hThisInstance,TCHAR* szClassName){
+	
+	WNDCLASSEX wincl;
+	/* The Window structure */
+    wincl.hInstance = hThisInstance;
+    wincl.lpszClassName = szClassName;
+    wincl.lpfnWndProc = NotepadWindowProcedure;      /* This function is called by windows */
+    wincl.style = CS_DBLCLKS;                 /* Catch double-clicks */
+    wincl.cbSize = sizeof (WNDCLASSEX);
 
-     MSG       msg ;
-     HACCEL    hAccel ;
-	 HWND	   notepadHwnd = _notepadHwnd;
+    /* Use default icon and mouse-pointer */
+    wincl.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
+    wincl.lpszMenuName = szClassName;                 /* No menu */
+    wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
+    wincl.cbWndExtra = 0;                      /* structure or the window instance */
+    /* Use Windows's default colour as the background of the window */
+    wincl.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
 
-     szAppName = szNotepadName;
+    /* Register the window class, and if it fails quit the program */
+    if (!RegisterClassEx (&wincl))
+        return 0;
 
-	 WNDCLASS  wndclass ;
+    /* The class is registered, let's create the program*/
+    HWND hwnd = CreateWindowEx (
+           0,                   /* Extended possibilites for variation */
+           szClassName,         /* Classname */
+           _T("Notepad"),       /* Title Text */
+           WS_OVERLAPPEDWINDOW, /* default window */
+           CW_USEDEFAULT,       /* Windows decides the position */
+           CW_USEDEFAULT,       /* where the window ends up on the screen */
+           544,                 /* The programs width */
+           375,                 /* and height in pixels */
+           HWND_DESKTOP,        /* The window is a child-window to desktop */
+           NULL,                /* No menu */
+           hThisInstance,       /* Program Instance handler */
+           NULL                 /* No Window Creation data */
+           );
+		   
+	szAppName = szClassName;
+	notepadAppHwnd = hwnd;
+	hNotepadInstance = hThisInstance;
+		   
+	return hwnd;
+}
 
-     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
-     wndclass.lpfnWndProc   = NotepadWindowProcedure ;
-     wndclass.cbClsExtra    = 0 ;
-     wndclass.cbWndExtra    = 0 ;
-     wndclass.hInstance     = hInstance ;
-     wndclass.hIcon         = LoadIcon (hInstance, szNotepadName) ;
-     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
-     wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
-     wndclass.lpszMenuName  = szNotepadName ;
-     wndclass.lpszClassName = szNotepadName ;
+int WINAPI notepadThread (PVOID pvoid) {
+	
+	 MSG msg;
+	 HACCEL hAccel = LoadAccelerators (hNotepadInstance, szAppName) ;
 
-     if (!RegisterClass (&wndclass)) {
-         MessageBox (NULL, TEXT ("This program requires Windows NT!"),
-             szNotepadName, MB_ICONERROR) ;
-         return 0 ;
-     }
-
-     notepadHwnd = CreateWindow (szNotepadName, NULL,
-         WS_OVERLAPPEDWINDOW,
-         CW_USEDEFAULT, CW_USEDEFAULT,
-         CW_USEDEFAULT, CW_USEDEFAULT,
-         NULL, NULL, hInstance, szCmdLine) ;
-
-     ShowWindow (notepadHwnd, iCmdShow) ;
-     UpdateWindow (notepadHwnd) ;
-
-     hAccel = LoadAccelerators (hInstance, szNotepadName) ;
-
-     while (GetMessage (&msg, NULL, 0, 0))
-     {
+     while (GetMessage (&msg, NULL, 0, 0)) {
+		 
           if (hDlgModeless == NULL || !IsDialogMessage (hDlgModeless, &msg))
           {
-               if (!TranslateAccelerator (notepadHwnd, hAccel, &msg))
+               if (!TranslateAccelerator (notepadAppHwnd, hAccel, &msg))
                {
                     TranslateMessage (&msg) ;
                     DispatchMessage (&msg) ;
@@ -380,7 +395,7 @@ LRESULT CALLBACK NotepadWindowProcedure (HWND hwnd, UINT message, WPARAM wParam,
 
      case WM_CLOSE:
           if (!bNeedSave || IDCANCEL != AskAboutSave (hwnd, szTitleName))
-               DestroyWindow (hwnd) ;
+               ShowWindow(hwnd,SW_HIDE);
 
           return 0 ;
 
@@ -392,7 +407,7 @@ LRESULT CALLBACK NotepadWindowProcedure (HWND hwnd, UINT message, WPARAM wParam,
 
      case WM_DESTROY:
           PopFontDeinitialize () ;
-          PostQuitMessage (0) ;
+          ShowWindow(hwnd,SW_HIDE);
           return 0 ;
 
      default:

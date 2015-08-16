@@ -6,35 +6,17 @@
 
 #include <tchar.h>
 #include <windows.h>
-#include "res/win_widget.h"
-#include "gnuplot_typer_panels.h"
-#include "typer_panels.h"
-#include "root_finding_panels.h"
-#include "mini_notepad_panels.h"
+#include <process.h>
+#include "win_widget.h"
+#include "type_convert.h"
 
-#define IDC_GNUPLOTTER_BUTTON  101
-#define IDC_TYPER_BUTTON       102
-#define IDC_ROOTFINDING_BUTTON 103
-#define IDC_NOTEPAD_BUTTON     104
+#define IDC_MAIN_BUTTON 101
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
 /*  Make the class name into a global variable  */
-TCHAR szClassName[ ] = _T("TemplateTest1");
-
-/*  Global Settings  */
-static TCHAR szNotepadAppName[] = TEXT ("MiniNotepad") ;
-static TCHAR szTyperAppName[] = TEXT ("Typer") ;
-static TCHAR szRootFindingAppName[] = TEXT ("RootFindingApp") ;
-static TCHAR szGNUPlotTyperAppName[] = TEXT ("GNUPlotTyper") ;
-static HWND notepadHwnd;
-static HWND typerConsoleHwnd;
-static HWND rootFindingHwnd;
-static HWND GNUPlotTyperHwnd;
-HINSTANCE hInstance;
-LPSTR szCmdLine;
-int nGlobCmdShow;
+TCHAR szClassName[ ] = _T("CodeBlocksWindowsApp");
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
                      HINSTANCE hPrevInstance,
@@ -44,10 +26,6 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     HWND hwnd;               /* This is the handle for our window */
     MSG messages;            /* Here messages to the application are saved */
     WNDCLASSEX wincl;        /* Data structure for the windowclass */
-
-    hInstance = hThisInstance;
-    szCmdLine = lpszArgument;
-    nGlobCmdShow = nCmdShow;
 
     /* The Window structure */
     wincl.hInstance = hThisInstance;
@@ -74,7 +52,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     hwnd = CreateWindowEx (
            0,                   /* Extended possibilites for variation */
            szClassName,         /* Classname */
-           _T("Templates function testing 1"),       /* Title Text */
+           _T("Code::Blocks Template Windows App"),       /* Title Text */
            WS_OVERLAPPEDWINDOW, /* default window */
            CW_USEDEFAULT,       /* Windows decides the position */
            CW_USEDEFAULT,       /* where the window ends up on the screen */
@@ -85,11 +63,6 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
            hThisInstance,       /* Program Instance handler */
            NULL                 /* No Window Creation data */
            );
-
-    typerConsoleHwnd = createTyperWindow(hInstance,szTyperAppName);
-    rootFindingHwnd = createRootFindingWindow(hInstance,szRootFindingAppName);
-    GNUPlotTyperHwnd = createGNUPlotTyperWindow(hInstance,szGNUPlotTyperAppName);
-    notepadHwnd = createNotepadWindow(hInstance,szNotepadAppName);
 
     /* Make the window visible on the screen */
     ShowWindow (hwnd, nCmdShow);
@@ -107,6 +80,15 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     return messages.wParam;
 }
 
+VOID Thread (PVOID pvoid)
+{
+     int    i=0 ;
+
+     while (1) {
+          showMessage("i is now: "+int2str(i));
+          i++;
+     }
+}
 
 /*  This function is called by the Windows function DispatchMessage()  */
 
@@ -115,41 +97,20 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     switch (message)                  /* handle the messages */
     {
         case WM_CREATE: {
-            WinButton button1("GNU Plotter Console",50,50,120,24,hwnd,(HMENU)IDC_GNUPLOTTER_BUTTON);
-            HWND hbutton1 = button1.getButton();
-            WinButton button2("Typer Console",50,90,120,24,hwnd,(HMENU)IDC_TYPER_BUTTON);
-            HWND hbutton2 = button2.getButton();
-            WinButton button3("Root Finding App",50,130,120,24,hwnd,(HMENU)IDC_ROOTFINDING_BUTTON);
-            HWND hbutton3 = button3.getButton();
-            WinButton button4("Mini Notepad",50,170,120,24,hwnd,(HMENU)IDC_NOTEPAD_BUTTON);
-            HWND hbutton4 = button4.getButton();
+            WinButton button1("OK",50,220,100,24,hwnd,(HMENU)IDC_MAIN_BUTTON);
+            HWND hbutton = button1.getButton();
             break;
         }
         case WM_COMMAND: {
-
             switch(LOWORD(wParam)){
-                case IDC_GNUPLOTTER_BUTTON: {
-                    ShowWindow(GNUPlotTyperHwnd,nGlobCmdShow);
-                    break;
-                }
-                case IDC_TYPER_BUTTON: {
-                    ShowWindow(typerConsoleHwnd,nGlobCmdShow);
-                    break;
-                }
-                case IDC_ROOTFINDING_BUTTON: {
-                    ShowWindow(rootFindingHwnd,nGlobCmdShow);
-                    break;
-                }
-                case IDC_NOTEPAD_BUTTON: {
-                    ShowWindow(notepadHwnd,nGlobCmdShow);
+                case IDC_MAIN_BUTTON:{
+                    _beginthread (Thread, 0, NULL) ;
                     break;
                 }
             }
-
             break;
         }
         case WM_DESTROY:
-            SendMessage(typerConsoleHwnd, WM_DESTROY, 0, 0);
             PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
             break;
         default:                      /* for messages that we don't deal with */
