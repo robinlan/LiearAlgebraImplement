@@ -9,12 +9,7 @@ Example usage:
 		HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
 		TCHAR szTyperAppName[] = TEXT("Typer") ;
 		HWND TyperHwnd;
-		TCHAR TyperSzClassName[ ] = _T("Typer");
-		WinWindows wincTyperObject(TyperSzClassName,hFatherInstance,SW_SHOWDEFAULT);
-		WNDCLASSEX wincTyper = wincTyperObject.getWinClass(TyperWindowProcedure2);
-		if( !wincTyperObject.getWinRegisterClass())
-			return 0;
-		TyperHwnd = wincTyperObject.getWinHWND(444,275,_T("Typer"));
+		TyperHwnd = createTyperWindow(hInstance,szTyperAppName);
 
 	In trigger place:
 		ShowWindow (TyperHwnd, nGlobCmdShow);
@@ -39,7 +34,51 @@ Example usage:
 
 using namespace std;
 
+LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK EditableWindowProcedure (HWND, UINT, WPARAM, LPARAM);
+
+HWND createTyperWindow(HINSTANCE hThisInstance,TCHAR* szClassName){
+	
+	WNDCLASSEX wincl;
+	/* The Window structure */
+    wincl.hInstance = hThisInstance;
+    wincl.lpszClassName = szClassName;
+    wincl.lpfnWndProc = TyperWindowProcedure;      /* This function is called by windows */
+    wincl.style = CS_DBLCLKS;                 /* Catch double-clicks */
+    wincl.cbSize = sizeof (WNDCLASSEX);
+
+    /* Use default icon and mouse-pointer */
+    wincl.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
+    wincl.lpszMenuName = NULL;                 /* No menu */
+    wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
+    wincl.cbWndExtra = 0;                      /* structure or the window instance */
+    /* Use Windows's default colour as the background of the window */
+    wincl.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
+
+    /* Register the window class, and if it fails quit the program */
+    if (!RegisterClassEx (&wincl))
+        return 0;
+
+    /* The class is registered, let's create the program*/
+    HWND hwnd = CreateWindowEx (
+           0,                   /* Extended possibilites for variation */
+           szClassName,         /* Classname */
+           _T("Typer Console"),       /* Title Text */
+           WS_OVERLAPPEDWINDOW, /* default window */
+           CW_USEDEFAULT,       /* Windows decides the position */
+           CW_USEDEFAULT,       /* where the window ends up on the screen */
+           544,                 /* The programs width */
+           375,                 /* and height in pixels */
+           HWND_DESKTOP,        /* The window is a child-window to desktop */
+           NULL,                /* No menu */
+           hThisInstance,       /* Program Instance handler */
+           NULL                 /* No Window Creation data */
+           );
+		   
+	return hwnd;
+}
 
 LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -371,9 +410,14 @@ LRESULT CALLBACK TyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, L
             showMessage(address);
             break;
      }
-
-     case WM_CLOSE:
+	 
+	 case WM_CLOSE: {
 		  ShowWindow(hwnd, SW_HIDE);
+		  return 0;
+	 }
+
+     case WM_DESTROY:
+		  PostQuitMessage (0) ;
           return 0 ;
      }
      return DefWindowProc (hwnd, message, wParam, lParam) ;

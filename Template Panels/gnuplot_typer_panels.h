@@ -9,12 +9,7 @@ Example usage:
 		HINSTANCE hFatherInstance = (HINSTANCE) GetWindowLong (hwnd, GWL_HINSTANCE) ;
 		TCHAR szGNUPlotTyperAppName[] = TEXT("GNUPlotTyper") ;
 		HWND GNUPlotTyperHwnd;
-		TCHAR GNUPlotTyperSzClassName[ ] = _T("GNUPlot_typer");
-		WinWindows wincGNUPlotTyperObject(GNUPlotTyperSzClassName,hFatherInstance,SW_SHOWDEFAULT);
-		WNDCLASSEX wincGNUPlotTyper = wincGNUPlotTyperObject.getWinClass(GNUPlotTyperWindowProcedure2);
-		if( !wincGNUPlotTyperObject.getWinRegisterClass())
-			return 0;
-		GNUPlotTyperHwnd = wincGNUPlotTyperObject.getWinHWND(444,275,_T("GNUPlot Typer"));
+		GNUPlotTyperHwnd = createGNUPlotTyperWindow(hInstance,szGNUPlotTyperAppName);
 	
 	In trigger place:
 		ShowWindow (GNUPlotTyperHwnd, nGlobCmdShow);
@@ -40,7 +35,51 @@ Example usage:
 
 using namespace std;
 
+LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK EditableWindowProcedure (HWND, UINT, WPARAM, LPARAM);
+
+HWND createGNUPlotTyperWindow(HINSTANCE hThisInstance,TCHAR* szClassName){
+	
+	WNDCLASSEX wincl;
+	/* The Window structure */
+    wincl.hInstance = hThisInstance;
+    wincl.lpszClassName = szClassName;
+    wincl.lpfnWndProc = GNUPlotTyperWindowProcedure;      /* This function is called by windows */
+    wincl.style = CS_DBLCLKS;                 			  /* Catch double-clicks */
+    wincl.cbSize = sizeof (WNDCLASSEX);
+
+    /* Use default icon and mouse-pointer */
+    wincl.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
+    wincl.lpszMenuName = NULL;                 /* No menu */
+    wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
+    wincl.cbWndExtra = 0;                      /* structure or the window instance */
+    /* Use Windows's default colour as the background of the window */
+    wincl.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
+
+    /* Register the window class, and if it fails quit the program */
+    if (!RegisterClassEx (&wincl))
+        return 0;
+
+    /* The class is registered, let's create the program*/
+    HWND hwnd = CreateWindowEx (
+           0,                   /* Extended possibilites for variation */
+           szClassName,         /* Classname */
+           _T("GNUPlot Typer Console"),       /* Title Text */
+           WS_OVERLAPPEDWINDOW, /* default window */
+           CW_USEDEFAULT,       /* Windows decides the position */
+           CW_USEDEFAULT,       /* where the window ends up on the screen */
+           544,                 /* The programs width */
+           375,                 /* and height in pixels */
+           HWND_DESKTOP,        /* The window is a child-window to desktop */
+           NULL,                /* No menu */
+           hThisInstance,       /* Program Instance handler */
+           NULL                 /* No Window Creation data */
+           );
+		   
+	return hwnd;
+}
 
 LRESULT CALLBACK GNUPlotTyperWindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
