@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1439869640 source:c:\users\user\desktop\simpleide\mainmdiwnd.rc
+	"resource.h"
+
+1439869580 c:\users\user\desktop\simpleide\resource.h
+
+1439889782 source:c:\users\user\desktop\simpleide\main.cpp
+	<tchar.h>
+	<windows.h>
+	<string>
+	<vector>
+	"resource.h"
+	"comand_console_panels.h"
+
+1439889878 c:\users\user\desktop\simpleide\comand_console_panels.h
+	<windows.h>
+	<string>
+	<vector>
+

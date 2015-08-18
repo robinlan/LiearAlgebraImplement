@@ -1,0 +1,42 @@
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAIN_MENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                40001
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      40002
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       40003
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Tile",                       40004
+        MENUITEM "C&ascade",                    40005
+        MENUITEM "Arrange &Icons",              40006
+        MENUITEM "Cl&ose All",                  40007
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_NEW            "Creates a new document\nNew"
+    IDM_FILE_CLOSE          "Closes the current document\nClose"
+    IDM_FILE_EXIT           "Closes the application\nExit"
+    IDM_WINDOW_TILE         "Arranges child windows in a tile format"
+    IDM_WINDOW_CASCADE      "Arranges child windows in a cascade format"
+    IDM_WINDOW_ICONS        "Arranges the icons of minimized child windows"
+    IDM_WINDOW_CLOSE_ALL    "Closes all child windows"
+END
