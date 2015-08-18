@@ -43,6 +43,15 @@
 		<Unit filename="RESOURCE.H" />
 		<Unit filename="comand_console_panels.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="mini_notepad_panels.h" />
+		<Unit filename="res/notepad/POPPAD.RC">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="res/notepad/PopFile.h" />
+		<Unit filename="res/notepad/PopFind.h" />
+		<Unit filename="res/notepad/PopFont.h" />
+		<Unit filename="res/notepad/PopPrnt.h" />
+		<Unit filename="res/notepad/RESOURCE.H" />
 		<Unit filename="res/type_convert.h" />
 		<Unit filename="res/win_widget.h" />
 		<Unit filename="typer_panels.h" />

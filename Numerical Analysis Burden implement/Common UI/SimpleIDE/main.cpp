@@ -10,6 +10,7 @@
 #include <vector>
 #include "resource.h"
 #include "comand_console_panels.h"
+#include "mini_notepad_panels.h"
 
 #define IDC_TYPER_BUTTON	101
 #define IDC_SETTING_ADDRESS	102
@@ -19,11 +20,14 @@ using namespace std;
 
 const char MainClassName[]  = "MainMDIWnd";
 char ChildClassName[] = "MDIChildWnd";
+char ChildNotepadClassName[] = "MDIChildNotepadWnd";
 
 const int StartChildrenNo = 994;
+const int StartChildrenNo2 = 904;
 
 HWND hWndMainFrame  = NULL;
 HWND hWndChildFrame = NULL;
+HWND hWndChildNotepadFrame = NULL;
 
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg,
 							 WPARAM wParam, LPARAM lParam);
@@ -56,6 +60,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 
 	if( !CreateNewCommandCosoleDocument(hInstance,ChildClassName) )
+		return 0;
+
+	if( !CreateNewNotepadDocument(hInstance,ChildNotepadClassName) )
 		return 0;
 
 	hWndMainFrame = CreateWindowEx(0L,
@@ -107,7 +114,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) 
 				                           "MDICLIENT",
 										   NULL,
 										   WS_CHILD | WS_CLIPCHILDREN | WS_VSCROLL
-										            | WS_HSCROLL | WS_VISIBLE,
+										            | WS_HSCROLL | WS_VISIBLE | WS_BORDER,
 				                           CW_USEDEFAULT,
 										   CW_USEDEFAULT,
 										   680,
@@ -119,9 +126,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) 
 
 			if(hWndChildFrame == NULL)
 				MessageBox(hWnd, "Could not create MDI client.", "Error", MB_OK | MB_ICONERROR);
+
 		}
+		CreateNewNotepadMDIChildren(hWndChildFrame,ChildNotepadClassName,hWndMainFrame);
 		CreateNewCommandConsoleMDIChildren(hWndChildFrame,ChildClassName,hWndMainFrame);
-		SendMessage(hWnd,WM_COMMAND,(WPARAM)IDM_WINDOW_TILE,0);
 		break;
 		case WM_SIZE: {
 
@@ -132,6 +140,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) 
 
 			hWndMDI = GetDlgItem(hWnd, IDM_FILE_NEW);
 			SetWindowPos(hWndMDI, NULL, 0, 0, rctClient.right, rctClient.bottom, SWP_NOZORDER);
+			SendMessage(hWnd,WM_COMMAND,(WPARAM)IDM_WINDOW_TILE,0);
 		}
 		break;
 		case WM_CLOSE:
@@ -145,6 +154,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) 
 
 				case IDM_FILE_NEW:
 					CreateNewCommandConsoleMDIChildren(hWndChildFrame,ChildClassName,hWndMainFrame);
+					SendMessage(hWnd,WM_COMMAND,(WPARAM)IDM_WINDOW_TILE,0);
+				break;
+				case IDM_FILE_EDITOR:
+					CreateNewNotepadMDIChildren(hWndChildFrame,ChildNotepadClassName,hWndMainFrame);
 					SendMessage(hWnd,WM_COMMAND,(WPARAM)IDM_WINDOW_TILE,0);
 				break;
 				case IDM_FILE_CLOSE: {
@@ -178,6 +191,111 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) 
 						hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
 						SendMessage(hWndCurrent, WM_CLOSE, 0, 0);
 					} while(hWndCurrent);
+				}
+				break;
+				
+				case IDM_EDITOR_FILE_NEW: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_FILE_NEW, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_FILE_OPEN: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_FILE_OPEN, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_FILE_SAVE: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_FILE_SAVE, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_FILE_SAVEAS: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_FILE_SAVE_AS, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_EDIT_UNDO: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_EDIT_UNDO, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_EDIT_CUT: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_EDIT_CUT, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_EDIT_COPY: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_EDIT_COPY, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_EDIT_PASTE: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_EDIT_PASTE, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_EDIT_CLEAR: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_EDIT_CLEAR, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_EDIT_SELECT_ALL: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_EDIT_SELECT_ALL, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_SEARCH_FIND: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_SEARCH_FIND, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_SEARCH_NEXT: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_SEARCH_NEXT, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_SEARCH_REPLACE: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_SEARCH_REPLACE, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_HELP: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_HELP, 0);
+				}
+				break;
+				
+				case IDM_EDITOR_ABOUT: {
+					HWND hWndCurrent;
+					hWndCurrent = (HWND)SendMessage(hWndChildFrame, WM_MDIGETACTIVE,0,0);
+					SendMessage(hWndCurrent, WM_COMMAND, (WPARAM)IDM_APP_ABOUT, 0);
 				}
 				break;
 

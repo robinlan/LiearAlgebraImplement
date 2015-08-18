@@ -11,6 +11,8 @@ BEGIN
     BEGIN
         MENUITEM "&New\tCtrl+N",                40001
         MENUITEM SEPARATOR
+		MENUITEM "&Editor",             	    40008
+        MENUITEM SEPARATOR
         MENUITEM "&Close",                      40002
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       40003
@@ -22,6 +24,33 @@ BEGIN
         MENUITEM "Arrange &Icons",              40006
         MENUITEM "Cl&ose All",                  40007
     END
+	POPUP "&Editor"
+    BEGIN
+        POPUP "&File"
+		BEGIN
+			MENUITEM "&New",                    40009
+			MENUITEM "&Open",              	    40010
+			MENUITEM "S&ave",        			40011
+			MENUITEM "S&ave As",        		40012
+		END
+		POPUP "&Edit"
+		BEGIN
+			MENUITEM "&Undo",                   40013
+			MENUITEM "&Cut",              	    40014
+			MENUITEM "C&opy",        			40015
+			MENUITEM "P&aste",        			40016
+			MENUITEM "&Clear",              	40017
+			MENUITEM "&Select All",             40018
+		END
+		POPUP "&Search"
+		BEGIN
+			MENUITEM "&Find",                   40019
+			MENUITEM "&Next",              	    40020
+			MENUITEM "&Replace",       			40021
+		END
+		MENUITEM "&Help",       				40022
+		MENUITEM "&About",       				40023
+    END
 END
 
 
@@ -32,11 +61,27 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_NEW            "Creates a new document\nNew"
-    IDM_FILE_CLOSE          "Closes the current document\nClose"
-    IDM_FILE_EXIT           "Closes the application\nExit"
-    IDM_WINDOW_TILE         "Arranges child windows in a tile format"
-    IDM_WINDOW_CASCADE      "Arranges child windows in a cascade format"
-    IDM_WINDOW_ICONS        "Arranges the icons of minimized child windows"
-    IDM_WINDOW_CLOSE_ALL    "Closes all child windows"
+    IDM_FILE_NEW            	"Creates a new document\nNew"
+	IDM_FILE_EDITOR				"Creates an editor"
+    IDM_FILE_CLOSE         	 	"Closes the current document\nClose"
+    IDM_FILE_EXIT          	 	"Closes the application\nExit"
+    IDM_WINDOW_TILE         	"Arranges child windows in a tile format"
+    IDM_WINDOW_CASCADE      	"Arranges child windows in a cascade format"
+    IDM_WINDOW_ICONS        	"Arranges the icons of minimized child windows"
+    IDM_WINDOW_CLOSE_ALL    	"Closes all child windows"
+	IDM_EDITOR_FILE_NEW			"Create a new file"
+	IDM_EDITOR_FILE_OPEN		"Open a new file"
+	IDM_EDITOR_FILE_SAVE		"Save the current file"
+	IDM_EDITOR_FILE_SAVEAS		"Save the current file in different way"
+	IDM_EDITOR_EDIT_UNDO		"Undo the last step"
+	IDM_EDITOR_EDIT_CUT			"Cut the content into clipboard"
+	IDM_EDITOR_EDIT_COPY		"Copy the content into clipboard"
+	IDM_EDITOR_EDIT_PASTE		"Paste the content into clipboard""
+	IDM_EDITOR_EDIT_CLEAR		"Clear the content"
+	IDM_EDITOR_EDIT_SELECT_ALL	"Select whole content"
+	IDM_EDITOR_SEARCH_FIND		"Find the string"
+	IDM_EDITOR_SEARCH_NEXT		"Find the next string"
+	IDM_EDITOR_SEARCH_REPLACE	"Replace the string"
+	IDM_EDITOR_HELP				"Offer some help"
+	IDM_EDITOR_ABOUT			"About the author - Robin Lan"
 END

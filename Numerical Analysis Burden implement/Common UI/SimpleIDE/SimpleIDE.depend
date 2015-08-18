@@ -17,3 +17,55 @@
 	<string>
 	<vector>
 
+1439905547 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\mainmdiwnd.rc
+	"resource.h"
+
+1439905455 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\resource.h
+
+1439904682 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\main.cpp
+	<tchar.h>
+	<windows.h>
+	<string>
+	<vector>
+	"resource.h"
+	"comand_console_panels.h"
+	"mini_notepad_panels.h"
+
+1439895541 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\comand_console_panels.h
+	<windows.h>
+	<string>
+	<vector>
+
+1439902710 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\mini_notepad_panels.h
+	<windows.h>
+	<commdlg.h>
+	"res/notepad/resource.h"
+	"res/notepad/PopFile.h"
+	"res/notepad/PopFont.h"
+	"res/notepad/PopPrnt.h"
+	"res/notepad/PopFind.h"
+
+907930800 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\res\notepad\resource.h
+
+1439705833 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\res\notepad\popfile.h
+	<windows.h>
+	<commdlg.h>
+
+1439705872 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\res\notepad\popfont.h
+	<windows.h>
+	<commdlg.h>
+
+1439705990 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\res\notepad\popprnt.h
+	<windows.h>
+	<commdlg.h>
+	"resource.h"
+
+1439706020 c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\res\notepad\popfind.h
+	<windows.h>
+	<commdlg.h>
+	<tchar.h>
+
+907930800 source:c:\users\administrator\desktop\robinlan\liearalgebraimplement\numerical analysis burden implement\common ui\simpleide\res\notepad\poppad.rc
+	"resource.h"
+	"afxres.h"
+
