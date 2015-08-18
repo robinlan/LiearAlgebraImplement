@@ -244,6 +244,7 @@ LRESULT CALLBACK CommandConsoleWindowProcedure(HWND hwnd, UINT msg, WPARAM wPara
 								yCaret = 0 ;
 						}
 
+						//showMessage(order);
 						orderVector.push_back(order);
 						order = "";
 						curOrderNum++;
