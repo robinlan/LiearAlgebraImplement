@@ -25,6 +25,16 @@ typedef struct {
 } PyIntObject;
 
 /******************************
+ *******Built-in Objects*******
+ ******************************/
+typedef struct {
+    PyObject_VAR_HEAD
+    long ob_shash;
+    int ob_sstate;
+    char ob_sval[1];
+} PyStringObject;
+
+/******************************
  *********Type Objects*********
  ******************************/
 typedef struct _typeobject {

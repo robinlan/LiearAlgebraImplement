@@ -1,0 +1,1338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>   
+    
+     
+    <script type="text/javascript" src="http://c.csdnimg.cn/pubfooter/js/tracking.js" charset="utf-8"></script>  
+
+    <script type="text/javascript">
+        var protocol = window.location.protocol;
+        document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script>
+
+     <script id="allmobilize" charset="utf-8" src="http://a.yunshipei.com/46aae4d1e2371e4aa769798941cef698/allmobilize.min.js"></script>
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <title>Python源码分析2 - 一个简单的Python程序的执行 - 张羿的CSDN专栏
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="AGG " />
+    <script src="http://static.blog.csdn.net/scripts/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://static.blog.csdn.net/scripts/ad.js?v=1.1"></script>
+        <!--new top-->
+               <link rel="stylesheet" href="http://static.csdn.net/public/common/toolbar/css/index.css">        <!--new top-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/ATField/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+</head>
+<body>
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://static.csdn.net/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/atfield">张羿的CSDN专栏</a></h2>
+            <h3>正在开发.NET Native</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>
+            
+                <li id="btnContents"><a href="http://blog.csdn.net/atfield?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/atfield?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/atfield/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "ATField";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/atfield";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/47808555"><font color=red>【博乐】把C币，装进你的口袋</font></a>
+&nbsp;&nbsp;&nbsp;
+  
+
+<a href="http://huiyi.csdn.net/activity/product/goods_list?project_id=2262">
+<font color=blue>专家亲授Hadoop技术，你报名了吗？ 
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+<a href="http://edu.csdn.net/combo/detail/63">
+<font color=red>软考套餐限时7折优惠 
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+<a href="http://www.csdn.net/app/">
+<font color=blue>CSDN移动客户端，下载送50C币
+</font></a>
+&nbsp;&nbsp;&nbsp;</div>                        </div>
+                        
+
+  
+<link href="http://static.blog.csdn.net/css/comment1.css" type="text/css" rel="stylesheet" />
+<link href="http://static.blog.csdn.net/css/style1.css" type="text/css" rel="stylesheet" />
+<script language='JavaScript' type='text/javascript' src='http://download.csdn.net/js/jquery.cookie.js'></script>
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/search-service/main.js"></script>
+<link rel="stylesheet" href="http://static.blog.csdn.net/public/res-min/markdown_views.css?v=1.0" />
+<script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/atfield/article/details/1396735">
+        Python源码分析2 - 一个简单的Python程序的执行            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+    <div class="article_manage">
+        <span class="link_categories">
+        分类：
+            <a href="/ATField/article/category/256448" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Python源码分析</a> 
+        </span>
+    <span class="link_postdate">2006-11-19 21:46</span>
+    <span class="link_view" title="阅读次数">7330人阅读</span>
+    <span class="link_comments" title="评论次数"><a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(3)</span>
+    <span class="link_collect"><a href="javascript:void(0);" onclick="javascript:collectArticle('Python源码分析2 - 一个简单的Python程序的执行','1396735');return false;" title="收藏">收藏</a></span>
+    <span class="link_report"><a href="#report"  onclick="javascript:report(1396735,2);return false;" title="举报">举报</a></span>
+    
+</div>
+<div class="tag2box"><a href='http://www.csdn.net/tag/python' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">python</a><a href='http://www.csdn.net/tag/null' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">null</a><a href='http://www.csdn.net/tag/struct' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">struct</a><a href='http://www.csdn.net/tag/fp' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">fp</a><a href='http://www.csdn.net/tag/file' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">file</a><a href='http://www.csdn.net/tag/module' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">module</a></div>
+
+  
+
+  
+  
+     
+
+<div id="article_content" class="article_content">
+<p>本文主要通过跟踪一个非常简单的Python程序的执行，简单讨论Python实现的基本框架和结构。 </p>
+<p>要执行Python程序如下，功能非常简单：从1加到10再打印出来 </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New"># test program </span></p>
+            <p><span style="FONT-FAMILY: Courier New">sum = 0 </span></p>
+            <p><span style="FONT-FAMILY: Courier New">for i in range(1, 11): </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;sum = sum + i </span></p>
+            <p><span style="FONT-FAMILY: Courier New">print sum</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>如果想要在Windows下面用VS 2005调试Python，可以通过下面步骤设置： </p>
+<ol>
+    <li>把Startup Project设置成Python，这样就可以直接通过F5来启动Python </li>
+    <li>右键单击Python这个Project，选择Properties。在对话框中的Configuration Properties-&gt;Debugging下面，把Command Arguments设置为-d test.py。其中test.py就是我们所要调试程序的名字。-d表示打开调试开关，可以看到额外的调试信息。 </li>
+</ol>
+<p>好了，设置完毕之后可以直接按下F10来单步追踪该程序的执行了。 </p>
+<p>首先，F10，启动程序，可以看到Python的main函数中没有什么内容，只是简单的调用Py_Main。Py_Main顾名思义自然是主函数了，分几大部分： </p>
+<ol>
+    <li>分析命令行和环境变量 </li>
+    <li>调用Py_Initialize初始化 </li>
+    <li>根据命令行的内容执行进入不同的执行模式<br /></li>
+</ol>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 542px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (command) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sts = PyRun_SimpleStringFlags(command, &amp;cf) != 0; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(command); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} else if (module) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sts = RunModule(module); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(module); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;else { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (filename == NULL &amp;&amp; stdin_is_interactive) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RunStartupFile(&amp;cf); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* XXX */ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sts = PyRun_AnyFileExFlags( </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fp, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename == NULL ? &quot;&lt;stdin&gt;&quot; : filename, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename != NULL, &amp;cf) != 0; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>从上面的代码可以很容易看出，一共有3种执行方式： </p>
+<ol>
+    <ol>
+        <li>Command模式，执行单条Python语句。通过-c指定。语句内容存放在command变量中。调用PyRun_SimpleStringFlags来执行。 </li>
+        <li>Module模式，执行整个Module。通过-m指定。调用RunModule来执行。 </li>
+        <li>File模式，执行Python源程序和交互都归在此类。可以看到，如果未指定文件名并且stdin是交互的话，会执行一个PYTHONSTARTUP所指定的源程序。 </li>
+    </ol>
+</ol>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+<p>4. 最后调用Py_Finalize结束 </p>
+</blockquote>
+<p>这里我们关注的主要对象自然是PyRun_AnyFileExFlags，其内容如下： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">/* Parse input from a file and execute it */ </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">int </span></p>
+            <p><span style="FONT-FAMILY: Courier New">PyRun_AnyFileExFlags(FILE *fp, const char *filename, int closeit, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PyCompilerFlags *flags) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (filename == NULL) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename = &quot;???&quot;; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (Py_FdIsInteractive(fp, filename)) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int err = PyRun_InteractiveLoopFlags(fp, filename, flags); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (closeit) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fclose(fp); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return err; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;else </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return PyRun_SimpleFileExFlags(fp, filename, closeit, flags); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} </span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>首先判断文件是否是交互的，如果是，则调用PyRun_InteractiveLoopFlags(fp, filename, flags)，否则调用PyRun_SimpleFlagExFlags。PyRun_InteractiveLoopFlags和PyRun_SimpleFileExFlags基本上区别不大，本质上作的事情都是一样，只不过一个是以语句为单位执行，一个是以程序为单位来执行。所以这里还是以分析PyRun_SimpleFileExFlags为主。 </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">int </span></p>
+            <p><span style="FONT-FAMILY: Courier New">PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyCompilerFlags *flags) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyObject *m, *d, *v; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;const char *ext; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;m = PyImport_AddModule(&quot;__main__&quot;); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (m == NULL) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;d = PyModule_GetDict(m); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (PyDict_GetItemString(d, &quot;__file__&quot;) == NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyObject *f = PyString_FromString(filename); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (f == NULL) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (PyDict_SetItemString(d, &quot;__file__&quot;, f) &lt; 0) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Py_DECREF(f); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Py_DECREF(f); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;ext = filename + strlen(filename) - 4; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (maybe_pyc_file(fp, filename, ext, closeit)) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* Try to run a pyc file. First, re-open in binary */ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (closeit) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fclose(fp); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ((fp = fopen(filename, &quot;rb&quot;)) == NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf(stderr, &quot;python: Can't reopen .pyc file/n&quot;); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* Turn on optimization if a .pyo file is given */ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (strcmp(ext, &quot;.pyo&quot;) == 0) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Py_OptimizeFlag = 1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v = run_pyc_file(fp, filename, d, d, flags); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} else { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v = PyRun_FileExFlags(fp, filename, Py_file_input, d, d, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; closeit, flags); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (v == NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyErr_Print(); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return -1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;Py_DECREF(v); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (Py_FlushLine()) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyErr_Clear(); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;return 0; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">}</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>可以看到此函数主要的作的事情是： </p>
+<ol>
+    <li>创建Module __main__，任何Python脚本都会自动属于__main__ </li>
+    <li>设置__file__为当前文件名字 </li>
+    <li>检查是否为.pyc / .pyo文件。Maybe_pyc_file会根据文件的扩展名和文件内容的头两个字节是否为0xf2b3来判断是否是pyc/pyo文件。如果是pyc或者pyo，调用run_pyc_file来直接执行Python的Bytecode。 </li>
+    <li>否则，调用PyRun_FileExFlags来执行Python的源程序 </li>
+</ol>
+<p>Run_pyc_file不是本文分析的重点，我们还是先来看一下PyRun_FileExFlags这个函数： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">PyObject * </span></p>
+            <p><span style="FONT-FAMILY: Courier New">PyRun_FileExFlags(FILE *fp, const char *filename, int start, PyObject *globals, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PyObject *locals, int closeit, PyCompilerFlags *flags) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyObject *ret; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;mod_ty mod; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyArena *arena = PyArena_New(); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (arena == NULL) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;mod = PyParser_ASTFromFile(fp, filename, start, 0, 0, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flags, NULL, arena); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (mod == NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyArena_Free(arena); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (closeit) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fclose(fp); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;ret = run_mod(mod, filename, globals, locals, flags, arena); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyArena_Free(arena); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;return ret; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">}</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>这个函数非常简单，但是却涵盖了整个Python源程序的运行的过程： </p>
+<ol>
+    <li>创建一个Arena对象。此对象是用于内存分配用的，维护分配的原始内存和PyObject对象。 </li>
+    <li>调用PyParser_ASTFromFile。 此函数会通过词法分析和语法分析得到源程序所对应的AST(Abstract Syntax Tree)。 </li>
+    <li>调用Run_mod </li>
+    <li>释放Arena </li>
+</ol>
+<p>PyParser_ASTFromFile的代码如下： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">mod_ty </span></p>
+            <p><span style="FONT-FAMILY: Courier New">PyParser_ASTFromFile(FILE *fp, const char *filename, int start, char *ps1, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; char *ps2, PyCompilerFlags *flags, int *errcode, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PyArena *arena) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;mod_ty mod; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;perrdetail err; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;node *n = PyParser_ParseFileFlags(fp, filename, &amp;_PyParser_Grammar, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start, ps1, ps2, &amp;err, PARSER_FLAGS(flags)); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (n) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mod = PyAST_FromNode(n, flags, filename, arena); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyNode_Free(n); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return mod; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;else { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err_input(&amp;err); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (errcode) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*errcode = err.error; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} </span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>首先，PyParser_ParseFileFlags分析文件，生成CST(Concrete Syntax Tree)并将其根结点放到node*之中。Node的结构如下： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">typedef struct _node { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">short&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_type; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">char&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*n_str; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_lineno; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_col_offset; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_nchildren; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">struct _node&nbsp;&nbsp;&nbsp;&nbsp;*n_child; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} node;</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>n_type代表着语法树的结点的类型，对应着Python-2.5/Grammar/Grammar文件中的文法中的终结符/非终结符，主要在graminit.h和token.h中定义。在后面的文章中会详述。N_str则是对应的字符串的内容。N_lineno / n_col_offset分别代表对应行号和列号。最后的两个n_nchildren和n_child表示此节点共有n_nchildren个子结点。 </p>
+<p>下面的函数可以用来访问node。大部分的函数都无需解释，除了RCHILD，RCHILD表示从右往左第几个，i给负值。比如RCHILD(n, -1)就是从右往左第一个结点。 </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">/* Node access functions */ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">#define NCH(n)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((n)-&gt;n_nchildren) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">#define CHILD(n, i)&nbsp;&nbsp;&nbsp;&nbsp;(&amp;(n)-&gt;n_child[i]) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">#define RCHILD(n, i)&nbsp;&nbsp;&nbsp;&nbsp;(CHILD(n, NCH(n) + i)) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">#define TYPE(n)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((n)-&gt;n_type) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">#define STR(n)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((n)-&gt;n_str) </span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>文中的Python程序的CST看起来大致是这样的： </p>
+<p>&nbsp;<img alt="" src="http://p.blog.csdn.net/images/p_blog_csdn_net/ATField/Python源码解析2-1.jpg" /></p>
+<p>图中省略了很多细节，因为是CST的关系，分析过程中有大量冗余信息，主要是每一步通过DFA分析的结点都列在这棵树里面了。由于篇幅的关系就不把整棵树画出来了。 </p>
+<p>那么CST是怎么生成的呢？在PyParser_ParseFileFlags中： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">node * </span></p>
+            <p><span style="FONT-FAMILY: Courier New">PyParser_ParseFileFlags(FILE *fp, const char *filename, grammar *g, int start, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;char *ps1, char *ps2, perrdetail *err_ret, int flags) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;struct tok_state *tok; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;initerr(err_ret, filename); </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if ((tok = PyTokenizer_FromFile(fp, ps1, ps2)) == NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err_ret-&gt;error = E_NOMEM; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;tok-&gt;filename = filename; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (Py_TabcheckFlag || Py_VerboseFlag) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tok-&gt;altwarning = (filename != NULL); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (Py_TabcheckFlag &gt;= 2) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tok-&gt;alterror++; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;return parsetok(tok, g, start, err_ret, flags); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} </span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>PyParser_ParserFileFlags首先创建tok_state，也就是词法分析器的对象，之后调用parsetok。Parsetok的代码量稍多，这里就不全部列出来了。主干代码如下： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">static node * </span></p>
+            <p><span style="FONT-FAMILY: Courier New">parsetok(struct tok_state *tok, grammar *g, int start, perrdetail *err_ret, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp; int flags) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;parser_state *ps; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;node *n; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;int started = 0, handling_import = 0, handling_with = 0; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;ps = PyParser_New(g, start); </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;for (;;) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type = PyTokenizer_Get(tok, &amp;a, &amp;b); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ((err_ret-&gt;error = PyParser_AddToken(ps, (int)type, str, tok-&gt;lineno, col_offset, &amp;(err_ret-&gt;expected))) != E_OK) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (err_ret-&gt;error != E_DONE) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PyObject_FREE(str); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err_ret-&gt;token = type; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (err_ret-&gt;error == E_DONE) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n = ps-&gt;p_tree; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ps-&gt;p_tree = NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;else </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n = NULL; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyParser_Delete(ps); </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (n == NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// error processing </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} else if (tok-&gt;encoding != NULL) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node* r = PyNode_New(encoding_decl); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!r) { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err_ret-&gt;error = E_NOMEM; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n = NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto done; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r-&gt;n_str = tok-&gt;encoding; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r-&gt;n_nchildren = 1; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r-&gt;n_child = n; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tok-&gt;encoding = NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n = r; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;} </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">done: </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyTokenizer_Free(tok); </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;return n; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} </span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>里面最重要的是两个函数调用： </p>
+<ol>
+    <li>PyTokenizer_Get，是用来进行词法分析的，把源程序分解为Token的序列（比如变量名，运算符，关键字等都属于Token） </li>
+    <li>PyParser_AddToken，把Token加入到DFA状态机中进行语法分析，根据当前的状态和输入的Token，根据跳转表跳转到不同的状态，并依照这个过程生成CST </li>
+</ol>
+<p>由于篇幅有限，这个两个函数的实现细节会在以后的文章详细分析。 </p>
+<p>在PyParser_ParserFileFlags得到了语法树之后，PyAST_FromNode会将CST转换为AST，存入mod_ty中。 </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">typedef _mod *mod_ty; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">struct _mod { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">enum _mod_kind kind; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">union { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">struct { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">asdl_seq *body; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} Module; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">struct { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">asdl_seq *body; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} Interactive; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">struct { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">expr_ty body; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} Expression; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">struct { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">asdl_seq *body; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} Suite; </span></p>
+            <p>&nbsp;</p>
+            <p><span style="FONT-FAMILY: Courier New">} v; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">};</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>_mod是AST的根结点，代表整个Module。在Python-ast.h中定义着所有AST结点的结构，mod_ty和expr_ty也在其中，后者显然代表着一个表达式。 </p>
+<p>adsl_seq代表一个变长的指针数组，结构定义如下： </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">typedef struct { </span></p>
+            <p><span style="FONT-FAMILY: Courier New">int size; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">void *elements[1]; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">} asdl_seq;</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>这个结构稍微有些特殊的是elements在struct中只有一个元素。其实这个struct可以支持任意多个元素，正因为如此，普通的定义方法是不行的。因此这里只定义一个元素，然后在分配计算实际的大小（会比adsl_seq这个结构要大），然后访问元素的时候直接用elements，因为C/C++是不会检查越界的。这种做法在C/C++系统编程中还是比较常见的。 </p>
+<p>Adsl_seq粗看上去只保存了void *，也就是说具体类型信息丢失了，那么当要遍历整个树的时候是如何做的呢？其实当遍历到某个结点（比如Module/Expression）的时候，便可以确定该结点所支持的子结点是什么类型，然后直接转强制转换就可以了。还有一种情况是在结点中直接记录的是具体的有类型的AST结点，比如expr_ty，就更加容易了。 </p>
+<p>文中Python代码对应的AST大致如下： </p>
+<p>&nbsp;<img alt="" src="http://p.blog.csdn.net/images/p_blog_csdn_net/ATField/Python源码解析2-2.jpg" /></p>
+<p>同样的，也省略了一些细节。可以看到，最终的结果要比CST要少很多，比较接近源代码本来的样子。 </p>
+<p>当PyParser_ASTFromFile执行完毕之后，回到PyRun_FileExFlags，执行下一步，调用run_mod，也就是执行这颗AST所代表的程序。 </p>
+<div>
+<table style="BACKGROUND: #c6d9f1; BORDER-COLLAPSE: collapse" border="0">
+    <colgroup><col style="WIDTH: 590px"></col></colgroup>
+    <tbody valign="top">
+        <tr>
+            <td>
+            <p><span style="FONT-FAMILY: Courier New">static PyObject * </span></p>
+            <p><span style="FONT-FAMILY: Courier New">run_mod(mod_ty mod, const char *filename, PyObject *globals, PyObject *locals, </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp; PyCompilerFlags *flags, PyArena *arena) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">{ </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyCodeObject *co; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;PyObject *v; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;co = PyAST_Compile(mod, filename, flags, arena); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;if (co == NULL) </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return NULL; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;v = PyEval_EvalCode(co, globals, locals); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;Py_DECREF(co); </span></p>
+            <p><span style="FONT-FAMILY: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;return v; </span></p>
+            <p><span style="FONT-FAMILY: Courier New">}</span></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>Run_mod非常直接，分两步走： </p>
+<ol>
+    <li>编译AST，生成PyCodeObject对象，也就是ByteCode。 </li>
+    <li>调用PyEval_EvalCode执行PyCodeObject，也就是通过VM直接执行bytecode。如果是执行.pyc/.pyo代码的话，直接从文件中读出信息创建好PyCodeObject对象就可以直接执行了，也是调用这个函数。 </li>
+</ol>
+<p>执行完PyEval_EvalCode之后可以看到55被打印出来了。 </p>
+<p>&nbsp;</p>
+<p>总结一下，Python执行程序的过程总共有以下几步： </p>
+<ol>
+    <li>Tokenizer进行词法分析，把源程序分解为Token </li>
+    <li>Parser根据Token创建CST </li>
+    <li>CST被转换为AST </li>
+    <li>AST被编译为字节码 </li>
+    <li>执行字节码 </li>
+</ol>
+<p>后面的文章中我会对1~5这5步分别进行详细分析，今天就先写到这里。&nbsp;</p>
+<div style="BORDER-RIGHT: medium none; PADDING-RIGHT: 0in; BORDER-TOP: medium none; PADDING-LEFT: 0in; PADDING-BOTTOM: 2pt; BORDER-LEFT: medium none; PADDING-TOP: 0in; BORDER-BOTTOM: #4f81bd 1pt solid; mso-element: para-border-div; mso-border-bottom-themecolor: accent1">
+<p class="underline" style="MARGIN: 2pt 0in 0pt"><o:p><font face="Calibri" size="1">&nbsp;</font></o:p></p>
+</div>
+<p><strong style="mso-bidi-font-weight: normal"><span lang="ZH-CN" style="FONT-SIZE: 9pt; FONT-FAMILY: 宋体; mso-ascii-font-family: Arial; mso-bidi-font-family: Arial; mso-ansi-language: EN-US; mso-fareast-language: ZH-CN; mso-bidi-language: AR-SA">作者</span></strong><span style="FONT-SIZE: 9pt; FONT-FAMILY: &quot;Arial&quot;,&quot;sans-serif&quot;; mso-fareast-font-family: 宋体; mso-ansi-language: EN-US; mso-fareast-language: ZH-CN; mso-bidi-language: AR-SA">: <span style="mso-tab-count: 1">&nbsp;&nbsp;&nbsp;&nbsp; </span>ATField<br /><strong style="mso-bidi-font-weight: normal">E-Mail:</strong> <span style="mso-tab-count: 1">&nbsp; </span><a href="mailto:atfield_zhang@hotmail.com">atfield_zhang@hotmail.com</a><br /><strong style="mso-bidi-font-weight: normal">Blog</strong>: <span style="mso-tab-count: 1">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="FONT-SIZE: 9pt; FONT-FAMILY: &quot;Arial&quot;,&quot;sans-serif&quot;; mso-fareast-font-family: Arial; mso-bidi-font-family: 'Times New Roman'; mso-bidi-font-size: 10.0pt; mso-bidi-theme-font: minor-bidi; mso-ansi-language: EN-US; mso-fareast-language: ZH-CN; mso-bidi-language: AR-SA"><a href="http://blog.csdn.net/atfield"><span style="mso-fareast-font-family: 宋体; mso-bidi-font-family: Arial; mso-bidi-font-size: 9.0pt">http://blog.csdn.net/atfield</span></a></span></p>    
+        <div  style="padding-top:20px">         
+            <p  style="font-size:12px;" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox" style="float: right;">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   <link rel="stylesheet" href="http://static.blog.csdn.net/css/blog_detail.css" />
+
+    
+<!--172.16.140.12-->
+<ul class="article_next_prev">
+            <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/atfield/article/details/1396729';">上一篇</span><a href="/atfield/article/details/1396729" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">Python源码分析1 - Building Python</a></li>
+            <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/atfield/article/details/1425558';">下一篇</span><a href="/atfield/article/details/1425558" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">ACM UVa 算法题100, 101, 103, 104, 112, 10405解法</a></li>
+</ul>
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+ 
+
+      
+</div>
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/ATField/svc/GetSuggestContent/1396735",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+<dl class="blog-ass-articl" id="res-relatived" > 
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+
+    <div id="adCollege" style="width: 42%;float: left;"> 
+        <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+        <script type="text/javascript">
+            csdn.position.showEdu({
+                sourceType: "blog",
+                searchType: "detail",
+                searchKey: "1396735",
+                username: "",
+                recordcount: "5",
+                containerId: "adCollege" //容器DIV的id。 
+            });
+        </script> 
+    </div>  
+
+    
+     <div id="res"  data-mod="popu_36"  class="tracking-ad" style="width: 42%;float: left;margin-right: 30px;"></div>
+   
+</dl>
+
+<div id="job_blog_reco">
+<script src="http://c.csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script>
+   
+     <script type="text/javascript">
+         csdn.position.show({
+         sourceType: "blog",
+         tplType: "blogDetail",
+         searchType: "detail",
+         searchKey: "1396735",
+             username: "",
+         containerId: "job_blog_reco"
+        }); 
+    </script>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        setTimeout(function () {
+            var searchtitletags = 'Python源码分析2 - 一个简单的Python程序的执行' + ',' + $("#tags").html();
+            searchService({
+                index: 'blog',
+                query: searchtitletags,
+                from: 5,
+                size: 5,
+                appendTo: '#res',
+                url: 'recommend',
+                his: 2,
+                client: "blog_cf_enhance",
+                tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+            });
+        }, 500);
+    });    
+
+ </script>   
+
+    <div id="ad_cen">
+   
+          <script type="text/javascript">
+              new Ad(4, 'ad_cen');
+          </script>
+    </div>
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '1396735';
+    var commentscount = 3;
+    var islock = false
+</script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/comment.js"></script>
+    <div id="ad_bot">
+    </div>
+    <script type="text/javascript">
+        setTimeout(function(){
+            new Ad(5, 'ad_bot');
+        },500);  
+    </script>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  language="javascript" type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/ATField/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });
+        },200);  
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }    
+
+</script>
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/ATField" target="_blank">
+    <img src="http://avatar.csdn.net/8/8/F/1_atfield.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/ATField" class="user_name" target="_blank">ATField</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=ATField','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>538407次</span></li>
+    <li>积分：<span>6696</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog6.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：6696 </div>
+        </span>  </li>
+    <li>排名：<span>第1532名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>118篇</span></li>
+    <li>转载：<span>11篇</span></li>
+    <li>译文：<span>1篇</span></li>
+    <li>评论：<span>465条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/ATField/article/category/75905" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">.NET</a><span>(25)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/269975" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">.NET / Rotor 源码分析</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/256452" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">ACM和算法</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/75906" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++</a><span>(4)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/158999" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Compiler</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/159000" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Linux/UNIX</a><span>(9)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/280520" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Mac OS X</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/256448" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Python源码分析</a><span>(6)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/479724" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">VS 2010 &amp;amp; .NET 4.0</a><span>(11)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/75907" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Win32/COM</a><span>(17)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/529323" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">WinDbg</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/ATField/article/category/79097" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">其他</a><span>(25)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/ATField/article/month/2014/04">2014年04月</a><span>(1)</span></li><li><a href="/ATField/article/month/2009/09">2009年09月</a><span>(1)</span></li><li><a href="/ATField/article/month/2009/08">2009年08月</a><span>(3)</span></li><li><a href="/ATField/article/month/2009/06">2009年06月</a><span>(2)</span></li><li><a href="/ATField/article/month/2009/05">2009年05月</a><span>(2)</span></li><li><a href="/ATField/article/month/2009/04">2009年04月</a><span>(2)</span></li><li><a href="/ATField/article/month/2009/03">2009年03月</a><span>(4)</span></li><li><a href="/ATField/article/month/2009/02">2009年02月</a><span>(1)</span></li><li><a href="/ATField/article/month/2009/01">2009年01月</a><span>(2)</span></li><li><a href="/ATField/article/month/2008/12">2008年12月</a><span>(3)</span></li><li><a href="/ATField/article/month/2008/11">2008年11月</a><span>(7)</span></li><li><a href="/ATField/article/month/2008/10">2008年10月</a><span>(4)</span></li><li><a href="/ATField/article/month/2008/09">2008年09月</a><span>(3)</span></li><li><a href="/ATField/article/month/2008/06">2008年06月</a><span>(2)</span></li><li><a href="/ATField/article/month/2008/03">2008年03月</a><span>(2)</span></li><li><a href="/ATField/article/month/2008/02">2008年02月</a><span>(3)</span></li><li><a href="/ATField/article/month/2007/12">2007年12月</a><span>(1)</span></li><li><a href="/ATField/article/month/2007/11">2007年11月</a><span>(1)</span></li><li><a href="/ATField/article/month/2007/10">2007年10月</a><span>(10)</span></li><li><a href="/ATField/article/month/2007/08">2007年08月</a><span>(9)</span></li><li><a href="/ATField/article/month/2007/07">2007年07月</a><span>(1)</span></li><li><a href="/ATField/article/month/2007/06">2007年06月</a><span>(1)</span></li><li><a href="/ATField/article/month/2007/05">2007年05月</a><span>(7)</span></li><li><a href="/ATField/article/month/2007/04">2007年04月</a><span>(11)</span></li><li><a href="/ATField/article/month/2007/03">2007年03月</a><span>(23)</span></li><li><a href="/ATField/article/month/2007/02">2007年02月</a><span>(7)</span></li><li><a href="/ATField/article/month/2007/01">2007年01月</a><span>(10)</span></li><li><a href="/ATField/article/month/2006/12">2006年12月</a><span>(5)</span></li><li><a href="/ATField/article/month/2006/11">2006年11月</a><span>(3)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/atfield/article/details/4493003" title="如果一个程序跑10000次只失败一次，你会怎么调试？">如果一个程序跑10000次只失败一次，你会怎么调试？</a><span>(26398)</span>
+</li>
+<li>
+<a href="/atfield/article/details/4465227" title=".NET 4.0中的新功能介绍：契约式设计 (Design By Contracts)">.NET 4.0中的新功能介绍：契约式设计 (Design By Contracts)</a><span>(18696)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1750890" title=".NET中的幕后英雄：MSCOREE.DLL">.NET中的幕后英雄：MSCOREE.DLL</a><span>(18183)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1507122" title="API Hook完全手册">API Hook完全手册</a><span>(14739)</span>
+</li>
+<li>
+<a href="/atfield/article/details/3203602" title="PDC：Anders谈C# 4.0：新功能和展望">PDC：Anders谈C# 4.0：新功能和展望</a><span>(13577)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1526253" title="VC运行库版本不同导致链接.LIB静态库时发生重复定义问题的一个案例分析和总结">VC运行库版本不同导致链接.LIB静态库时发生重复定义问题的一个案例分析和总结</a><span>(12620)</span>
+</li>
+<li>
+<a href="/atfield/article/details/23449089" title=".NET直接编译成本地代码：.NET Native架构简介">.NET直接编译成本地代码：.NET Native架构简介</a><span>(12212)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1589603" title="一道看上去很吓人的算法面试题：如何对n个数进行排序，要求时间复杂度O(n)，空间复杂度O(1)">一道看上去很吓人的算法面试题：如何对n个数进行排序，要求时间复杂度O(n)，空间复杂度O(1)</a><span>(9445)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1532506" title="UNIX信号(signal)编程 - UNIX高级环境编程第10章读书笔记">UNIX信号(signal)编程 - UNIX高级环境编程第10章读书笔记</a><span>(9291)</span>
+</li>
+<li>
+<a href="/atfield/article/details/4037248" title="调试Bug的神兵利器：通过WinDbg条件断点收集Log">调试Bug的神兵利器：通过WinDbg条件断点收集Log</a><span>(8580)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/atfield/article/details/3203602" title="PDC：Anders谈C# 4.0：新功能和展望">PDC：Anders谈C# 4.0：新功能和展望</a><span>(75)</span>
+</li>
+<li>
+<a href="/atfield/article/details/23449089" title=".NET直接编译成本地代码：.NET Native架构简介">.NET直接编译成本地代码：.NET Native架构简介</a><span>(69)</span>
+</li>
+<li>
+<a href="/atfield/article/details/4493003" title="如果一个程序跑10000次只失败一次，你会怎么调试？">如果一个程序跑10000次只失败一次，你会怎么调试？</a><span>(55)</span>
+</li>
+<li>
+<a href="/atfield/article/details/4202048" title="Visual Studio 2010 + .NET 4.0Beta1发布!">Visual Studio 2010 + .NET 4.0Beta1发布!</a><span>(27)</span>
+</li>
+<li>
+<a href="/atfield/article/details/4465227" title=".NET 4.0中的新功能介绍：契约式设计 (Design By Contracts)">.NET 4.0中的新功能介绍：契约式设计 (Design By Contracts)</a><span>(24)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1750890" title=".NET中的幕后英雄：MSCOREE.DLL">.NET中的幕后英雄：MSCOREE.DLL</a><span>(23)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1382694" title="C++反汇编揭秘1 – 一个简单C++程序反汇编解析 (Rev. 3)">C++反汇编揭秘1 – 一个简单C++程序反汇编解析 (Rev. 3)</a><span>(14)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1589603" title="一道看上去很吓人的算法面试题：如何对n个数进行排序，要求时间复杂度O(n)，空间复杂度O(1)">一道看上去很吓人的算法面试题：如何对n个数进行排序，要求时间复杂度O(n)，空间复杂度O(1)</a><span>(14)</span>
+</li>
+<li>
+<a href="/atfield/article/details/3204289" title="VS 2010 &amp;amp; .NET 4.0 CTP下载地址（10/31放出）">VS 2010 &amp;amp; .NET 4.0 CTP下载地址（10/31放出）</a><span>(13)</span>
+</li>
+<li>
+<a href="/atfield/article/details/1496132" title="如何求最长连续公共子序列和最长连续子字符串">如何求最长连续公共子序列和最长连续子字符串</a><span>(9)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend"></ul>
+</div>
+<script type="text/javascript">
+ new Ad(12, 'ad_commend');
+</script><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/atfield/article/details/23449089#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/hoopmac" class="user_name">hoopmac</a>:
+还期待着VS2015发布的时候能听到一些.net native的消息...哎
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/23449089#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/ProjectDD" class="user_name">ProjectDD</a>:
+一年过去了依旧 哑火状态
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/23449089#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/h0730303779" class="user_name">h0730303779</a>:
+1年过去了。。。现在能支持winform了没？大神们？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/4493003#comments">如果一个程序跑10000次只失败一次，你会怎么调试？</a>
+    <p style="margin:0px;"><a href="/u013842721" class="user_name">u013842721</a>:
+受益，谢谢博主。
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/4493003#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/yinhu201" class="user_name">yinhu201</a>:
+我只关心wpf和winform，应用商店程序没什么人愿意用的。
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/1589603#comments">一道看上去很吓人的算法面试题：如何对n个数进行排序，要求时间复杂度O(n)，空间复杂度O(1)</a>
+    <p style="margin:0px;"><a href="/sinat_20565969" class="user_name">sinat_20565969</a>:
+万一 n 个 数 里面 有重复的数 怎么办呢？输出的时候把 两个 重复 的 数 合并算 成一个 吗？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/1589603#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/ttgss" class="user_name">ttgss</a>:
+楼主也知道谷歌的ART和ARC了吧.你们现在什么程度了?   还是不管winform?
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/1589603#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/ttgss" class="user_name">ttgss</a>:
+楼主也知道谷歌的ART和ARC了吧.你们现在什么程度了?   还是不管winform?
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/1589603#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/ttgss" class="user_name">ttgss</a>:
+楼主也知道谷歌的ART和ARC了吧.你们现在什么程度了?   还是不管winform?
+    </p>
+    </li>
+    <li>
+   
+         <a href="/atfield/article/details/1589603#comments">.NET直接编译成本地代码：.NET Native架构简介</a>
+    <p style="margin:0px;"><a href="/sqlnew" class="user_name">sqlnew</a>:
+虽然我是微软的支持者和开发者，但我不得不说的是，微软真的是被自己玩残了，被自己的策略玩残了。不要以为...
+    </p>
+    </li>
+</ul>
+</div>
+
+
+<div id="custom_column_942172" class="panel">
+<ul class="panel_head"><span>.NET</span></ul>
+<ul class="panel_body">
+<ul><li><a href="http://blog.joycode.com/vbcti" target=_blank>VB CTI Blog</a></li></ul>
+</ul>
+</div>
+
+<div id="custom_column_942173" class="panel">
+<ul class="panel_head"><span>ACM &amp; Algorithms</span></ul>
+<ul class="panel_body">
+<ul><li><a href="http://acm.uva.es/problemset/" target=_blank>UVa Online Judge</a></li><li><a href="http://acm.timus.ru/" target=_blank>Ural Online Judge</a></li><li><a href="http://www.topcoder.com/" target=_blank>Top Coder</a></li></ul>
+</ul>
+</div>
+
+<div id="custom_column_942174" class="panel">
+<ul class="panel_head"><span>Blog Links</span></ul>
+<ul class="panel_body">
+<ul><li><a href="http://blog.csdn.net/silverlightshanghai" target=_blank>Silverlight上海开发团队Blog</a> (<a href="http://blog.csdn.net/silverlightshanghai/Rss.aspx" target=_blank>RSS</a>)</li><li><a href="http://blog.joycode.com/vbcti/" target=_blank>VBCTI team blog</a> (<a href="http://blog.joycode.com/vbcti/Rss.aspx" target=_blank>RSS</a>)</li><li><a href="http://weblogs.asp.net/scottgu/" target=_blank>Scott Guthrie</a> (<a href="http://weblogs.asp.net/scottgu/rss.aspx" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/Adam_Nathan/" target=_blank>Adam Nathan</a> (<a href="http://blogs.msdn.com/adam_nathan/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/joshwil/" target=_blank>Josh Williams</a> (<a href="http://blogs.msdn.com/joshwil/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/yunjin/" target=_blank>Yun Jin</a> (<a href="http://blogs.msdn.com/yunjin/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/patrick_dussud/default.aspx" target=_blank>Patrick Dussud</a> (<a href="http://blogs.msdn.com/patrick_dussud/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/davidnotario/" target=_blank>David Notario</a> (<a href="http://blogs.msdn.com/davidnotario/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/suzcook/" target=_blank>Suzanne Cook</a> (<a href="http://blogs.msdn.com/suzcook/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/junfeng/" target=_blank>Junfeng Zhang</a> (<a href="http://blogs.msdn.com/junfeng/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/BCLTeam/" target=_blank>BCL Team Blog</a> (<a href="http://blogs.msdn.com/bclteam/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/jmstall/" target=_blank>Mike Stall</a> (<a href="http://blogs.msdn.com/jmstall/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/cbrumme/default.aspx" target=_blank>Chris Brumme</a> (<a href="http://blogs.msdn.com/cbrumme/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/thottams/default.aspx" target=_blank>Thottam R. Sriram</a> (<a href="http://blogs.msdn.com/thottams/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/varunsekhri/default.aspx" target=_blank>Varun Sekhri</a> (<a href="http://blogs.msdn.com/varunsekhri/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/mbend/" target=_blank>Mason Bendixen</a> (<a href="http://blogs.msdn.com/mbend/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/oldnewthing/" target=_blank>Raymond Chen's Blog</a> (<a href="http://blogs.msdn.com/oldnewthing/rss.xml" target=_blank>RSS</a>)</li><li><a href="http://www.wintellect.com/cs/blogs/JeffreyR/default.aspx" target=_blank>Jeffrey Richter's Blog</a> (<a href="http://www.wintellect.com/cs/blogs/jeffreyr/rss.aspx" target=_blank>RSS</a>)</li><li><a href="http://blogs.msdn.com/matt_pietrek/default.aspx" target=_blank>Matt Pietrek's Blog</a> (<a href="http://blogs.msdn.com/matt_pietrek/rss.xml" target=_blank>RSS</a>)</li></ul>
+</ul>
+</div>
+
+<div id="custom_column_942175" class="panel">
+<ul class="panel_head"><span>Compilers</span></ul>
+<ul class="panel_body">
+<ul><li><a href="http://www.compilers.net/" target=_blank>www.compilers.net</a></li><li><a href="http://gcc.gnu.org/" target=_blank>GCC</a></li><li><a href="http://www.python.org" target=_blank>Python</a></li><li><a href="https://openjdk.dev.java.net/hotspot/" target=_blank>Java Hotspot VM</a></li></ul>
+</ul>
+</div>    </div>
+    <div class="clear">
+    </div>
+ </div>   
+            <div class="clear">
+            </div>
+        </div>
+        
+
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/cnick/cnick.js"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/newblog.min.js"></script>
+
+
+<script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=11759"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/JavaScript1.js"></script>
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script>
+<script type="text/javascript" src="http://www.csdn.net/ui/scripts/Csdn/counter.js"></script>
+<script type="text/javascript" src="http://ad.csdn.net/scripts/ad-blog.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a>"
+                    + "<a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+    });
+</script>
+
+
+
+
+    </div>
+      <!--new top-->
+    
+    <script id="csdn-toolbar-id" btnId="header_notice_num" wrapId="note1" count="5" subCount="5" type="text/javascript" src="http://static.csdn.net/public/common/toolbar/js/toolbar.js"></script>     <!--new top-->
+   
+    <link href="http://c.csdnimg.cn/comm_ask/css/ask_float_block.css" type="text/css" rel="stylesheet" />
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/wmd.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/showdown.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/prettify.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/apps/ask_float_block.js'></script>
+   
+</body>
+</html>   
+ 

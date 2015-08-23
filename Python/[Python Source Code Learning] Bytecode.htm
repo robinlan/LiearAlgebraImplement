@@ -1,0 +1,1314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>   
+    
+     
+    <script type="text/javascript" src="http://c.csdnimg.cn/pubfooter/js/tracking.js" charset="utf-8"></script>  
+
+    <script type="text/javascript">
+        var protocol = window.location.protocol;
+        document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script>
+
+     <script id="allmobilize" charset="utf-8" src="http://a.yunshipei.com/46aae4d1e2371e4aa769798941cef698/allmobilize.min.js"></script>
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <title>[Python源码学习]之bytecode - 1+1=10
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="fedora 20下安装vim的C++补全插件clang_complete" />
+    <script src="http://static.blog.csdn.net/scripts/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://static.blog.csdn.net/scripts/ad.js?v=1.1"></script>
+        <!--new top-->
+               <link rel="stylesheet" href="http://static.csdn.net/public/common/toolbar/css/index.css">        <!--new top-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/default/css/style.css?v=1.1" />
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/dbzhang800/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+</head>
+<body>
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://static.csdn.net/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/dbzhang800">1+1=10</a></h2>
+            <h3>简简单单，我的小屋...</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>
+            
+                <li id="btnContents"><a href="http://blog.csdn.net/dbzhang800?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/dbzhang800?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/dbzhang800/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "dbzhang800";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/dbzhang800";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+<a href="http://blog.csdn.net/blogdevteam/article/details/47808555"><font color=red>【博乐】把C币，装进你的口袋</font></a>
+&nbsp;&nbsp;&nbsp;
+  
+
+<a href="http://huiyi.csdn.net/activity/product/goods_list?project_id=2262">
+<font color=blue>专家亲授Hadoop技术，你报名了吗？ 
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+<a href="http://edu.csdn.net/combo/detail/63">
+<font color=red>软考套餐限时7折优惠 
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+<a href="http://www.csdn.net/app/">
+<font color=blue>CSDN移动客户端，下载送50C币
+</font></a>
+&nbsp;&nbsp;&nbsp;</div>                        </div>
+                        
+
+  
+<link href="http://static.blog.csdn.net/css/comment1.css" type="text/css" rel="stylesheet" />
+<link href="http://static.blog.csdn.net/css/style1.css" type="text/css" rel="stylesheet" />
+<script language='JavaScript' type='text/javascript' src='http://download.csdn.net/js/jquery.cookie.js'></script>
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/search-service/main.js"></script>
+<link rel="stylesheet" href="http://static.blog.csdn.net/public/res-min/markdown_views.css?v=1.0" />
+<script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="/dbzhang800/article/details/6766284">
+        [Python源码学习]之bytecode            
+        </a></span>
+    </h1>
+</div>
+
+   
+
+    <div class="article_manage">
+        <span class="link_categories">
+        分类：
+            <a href="/dbzhang800/article/category/759348" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Python</a> 
+            <a href="/dbzhang800/article/category/865869" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Python源码学习</a> 
+        </span>
+    <span class="link_postdate">2011-09-10 18:25</span>
+    <span class="link_view" title="阅读次数">2169人阅读</span>
+    <span class="link_comments" title="评论次数"><a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+    <span class="link_collect"><a href="javascript:void(0);" onclick="javascript:collectArticle('[Python源码学习]之bytecode','6766284');return false;" title="收藏">收藏</a></span>
+    <span class="link_report"><a href="#report"  onclick="javascript:report(6766284,2);return false;" title="举报">举报</a></span>
+    
+</div>
+<div class="tag2box"><a href='http://www.csdn.net/tag/python' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">python</a><a href='http://www.csdn.net/tag/optimization' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">optimization</a><a href='http://www.csdn.net/tag/constants' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">constants</a><a href='http://www.csdn.net/tag/import' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">import</a><a href='http://www.csdn.net/tag/string' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">string</a><a href='http://www.csdn.net/tag/variables' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">variables</a></div>
+
+  
+
+  
+  
+     
+
+<div id="article_content" class="article_content">
+
+<span style=""></span>
+<div>
+<table style="margin-top:0.5em; margin-right:0px; margin-bottom:0px; margin-left:0.5em; border-collapse:collapse">
+<tbody>
+<tr>
+<td colspan="1" rowspan="4" style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7); text-align:center">
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<strong>源码</strong>：<br>
+xxx.py文件<br>
+或 字符串</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+==&gt;</p>
+</td>
+<td colspan="1" rowspan="4" style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7); text-align:center">
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<strong>字节码</strong>：<br>
+可缓存在xxx.pyc</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+==&gt;</p>
+</td>
+<td colspan="1" rowspan="4" style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7); text-align:center">
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<strong>结果</strong></p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-2-8"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+pythonX.dll<br>
+libpythonX.X.a</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+pythonX.dll<br>
+libpythonX.X.a</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-3-8"></span>
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<tt>Py_CompileString***（...）&nbsp;</tt></p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<tt>PyEval_Eval***（...）&nbsp;</tt></p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-4-7"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+compile</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+eval</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>Python 代码首先被编译成 bytecode，然后才被解释器进行执行。<span class="anchor" id="line-6-7"></span></li><li>bytecode 可被缓存动.pyc或.pyo文件内。<span class="anchor" id="line-7-6"></span></li><li>
+<p class="line862" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+bytecode 对应源码中的 PyCodeObject 结构体对象<span class="anchor" id="line-8-5"></span><span class="anchor" id="line-9-5"></span></p>
+</li></ul>
+<h2 id="A.2BdR9iEA_.pyc_.2BZYdO9g-" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+生成 .pyc 文件</h2>
+<span class="anchor" id="line-10-4"></span>
+<p class="line874">代码中通过import使用到的.py文件会自动编译成.pyc文件，如何手动来编译呢？<span class="anchor" id="line-11-4"></span><span class="anchor" id="line-12-3"></span></p>
+<ul>
+<li>交互模式或者代码中<span class="anchor" id="line-13-3"></span></li></ul>
+<p class="line867"><span class="anchor" id="line-14-3"></span><span class="anchor" id="line-15-3"></span><span class="anchor" id="line-16-3"></span><span class="anchor" id="line-17-2"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1"></span>&gt;&gt;&gt; import py_compile
+<span class="anchor" id="line-2"></span>&gt;&gt;&gt; py_compile.compile('hello.py')
+<span class="anchor" id="line-3"></span>&gt;&gt;&gt; </pre>
+<span class="anchor" id="line-18-2"></span>
+<ul>
+<li>或者使用 命令行<span class="anchor" id="line-19-2"></span></li></ul>
+<p class="line867"><span class="anchor" id="line-20-1"></span><span class="anchor" id="line-21-1"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-1"></span>python3 -m py_compile hello.py</pre>
+<span class="anchor" id="line-22-1"></span>
+<p class="line874">生成的文件(个人机子上的结果)：<span class="anchor" id="line-23-1"></span><span class="anchor" id="line-24"></span><span class="anchor" id="line-25"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-2"></span>__pycache__/hello.cpython-32.pyc</pre>
+<span class="anchor" id="line-26"></span><span class="anchor" id="line-27"></span>
+<ul>
+<li>
+<p class="line862" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+将当前目录下的文件都编译成 .pyc 使用<span>&nbsp;</span><tt>compileall</tt>模块<span class="anchor" id="line-28"></span></p>
+</li></ul>
+<p class="line867"><span class="anchor" id="line-29"></span><span class="anchor" id="line-30"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-3"></span>python -m compileall .</pre>
+<span class="anchor" id="line-31"></span><span class="anchor" id="line-32"></span>
+<p class="line862">这儿的<tt>py_compile</tt>和<tt>compileall</tt>使用的都是builtins模块的compile()函数<span class="anchor" id="line-33"></span><span class="anchor" id="line-34"></span></p>
+<h2 id="builtins" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+builtins</h2>
+<span class="anchor" id="line-35"></span>
+<p class="line874">在python执行环境中，builtins模块中：<span class="anchor" id="line-36"></span></p>
+<div>
+<table style="margin-top:0.5em; margin-right:0px; margin-bottom:0px; margin-left:0.5em; border-collapse:collapse">
+<tbody>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<strong>compile</strong>()</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+编译成字节码，code对象(PyCodeObject)</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-37"></span>
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<strong>eval</strong>()、exec()</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+执行</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-38"></span><span class="anchor" id="line-39"></span>
+<p class="line874">一个例子：<span class="anchor" id="line-40"></span><span class="anchor" id="line-41"></span><span class="anchor" id="line-42"></span><span class="anchor" id="line-43"></span><span class="anchor" id="line-44"></span><span class="anchor" id="line-45"></span><span class="anchor" id="line-46"></span><span class="anchor" id="line-47"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-4"></span>&gt;&gt;&gt; a = &quot;1&#43;2&quot;
+<span class="anchor" id="line-2-1"></span>&gt;&gt;&gt; b = compile(a, &quot;test.py&quot;, 'single')
+<span class="anchor" id="line-3-1"></span>&gt;&gt;&gt; type(b)
+<span class="anchor" id="line-4"></span>&lt;class 'code'&gt;
+<span class="anchor" id="line-5"></span>&gt;&gt;&gt; eval(b)
+<span class="anchor" id="line-6"></span>3</pre>
+<span class="anchor" id="line-48"></span><span class="anchor" id="line-49"></span>
+<p class="line862">它们对应<a href="http://blog.csdn.net/dbzhang800/article/details/6690214" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">C高层接口</a>中的下面两类函数：<span class="anchor" id="line-50"></span><span class="anchor" id="line-51"></span></p>
+<div>
+<table style="margin-top:0.5em; margin-right:0px; margin-bottom:0px; margin-left:0.5em; border-collapse:collapse">
+<tbody>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<tt>Py_CompileString***（...）&nbsp;</tt></p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+将python代码编译成bytecode</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-52"></span>
+<p class="line891" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+<tt>PyEval_Eval***（...）&nbsp;</tt></p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+执行这个bytecode</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-53"></span><span class="anchor" id="line-54"></span>
+<h3 id="A.2BTuN4AQ-" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+代码</h3>
+<span class="anchor" id="line-55"></span>
+<p class="line874">compile() 和 eval()、exec() 是内建模块中的函数，所以瞅瞅<span class="anchor" id="line-56"></span></p>
+<ul>
+<li>Python/bltinmodule.c<span class="anchor" id="line-57"></span></li></ul>
+<p class="line874">中定义的方法：<span class="anchor" id="line-58"></span><span class="anchor" id="line-59"></span><span class="anchor" id="line-60"></span><span class="anchor" id="line-61"></span><span class="anchor" id="line-62"></span><span class="anchor" id="line-63"></span><span class="anchor" id="line-64"></span><span class="anchor" id="line-65"></span><span class="anchor" id="line-66"></span><span class="anchor" id="line-67"></span><span class="anchor" id="line-68"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-5"></span>static PyMethodDef builtin_methods[] = {
+<span class="anchor" id="line-2-2"></span>//...
+<span class="anchor" id="line-3-2"></span>  {&quot;compile&quot;, (PyCFunction)builtin_compile, METH_VARARGS|METH_KEYWORDS, compile_doc},
+<span class="anchor" id="line-4-1"></span>//...
+<span class="anchor" id="line-5-1"></span>  {&quot;eval&quot;,  builtin_eval,       METH_VARARGS, eval_doc},
+<span class="anchor" id="line-6-1"></span>  {&quot;exec&quot;,  builtin_exec,       METH_VARARGS, exec_doc},
+<span class="anchor" id="line-7"></span>//...
+<span class="anchor" id="line-8"></span>  {NULL,    NULL},
+<span class="anchor" id="line-9"></span>};</pre>
+<span class="anchor" id="line-69"></span><span class="anchor" id="line-70"></span>
+<p class="line874">其中：<span class="anchor" id="line-71"></span></p>
+<ul>
+<li>
+<p class="line862" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+builtin_compile() 调用<span>&nbsp;</span><tt>PyAST_CompileEx</tt><span>&nbsp;</span>或<span>&nbsp;</span><tt>Py_CompileStringExFlags</tt><span class="anchor" id="line-72"></span></p>
+</li></ul>
+<p class="line867"><span class="anchor" id="line-73"></span><span class="anchor" id="line-74"></span><span class="anchor" id="line-75"></span><span class="anchor" id="line-76"></span><span class="anchor" id="line-77"></span><span class="anchor" id="line-78"></span><span class="anchor" id="line-79"></span><span class="anchor" id="line-80"></span><span class="anchor" id="line-81"></span><span class="anchor" id="line-82"></span><span class="anchor" id="line-83"></span><span class="anchor" id="line-84"></span><span class="anchor" id="line-85"></span><span class="anchor" id="line-86"></span><span class="anchor" id="line-87"></span><span class="anchor" id="line-88"></span><span class="anchor" id="line-89"></span><span class="anchor" id="line-90"></span><span class="anchor" id="line-91"></span><span class="anchor" id="line-92"></span><span class="anchor" id="line-93"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-6"></span>static PyObject *
+<span class="anchor" id="line-2-3"></span>builtin_compile(PyObject *self, PyObject *args, PyObject *kwds)
+<span class="anchor" id="line-3-3"></span>{
+<span class="anchor" id="line-4-2"></span>....
+<span class="anchor" id="line-5-2"></span>    is_ast = PyAST_Check(cmd);
+<span class="anchor" id="line-6-2"></span>    if (is_ast) {
+<span class="anchor" id="line-7-1"></span>...
+<span class="anchor" id="line-8-1"></span>            result = (PyObject*)PyAST_CompileEx(mod, filename,
+<span class="anchor" id="line-9-1"></span>...
+<span class="anchor" id="line-10"></span>        goto finally;
+<span class="anchor" id="line-11"></span>    }
+<span class="anchor" id="line-12"></span>...
+<span class="anchor" id="line-13"></span>    result = Py_CompileStringExFlags(str, filename, start[mode], &amp;cf, optimize);
+<span class="anchor" id="line-14"></span>    goto finally;
+<span class="anchor" id="line-15"></span>
+<span class="anchor" id="line-16"></span>finally:
+<span class="anchor" id="line-17"></span>    Py_DECREF(filename_obj);
+<span class="anchor" id="line-18"></span>    return result;
+<span class="anchor" id="line-19"></span>}</pre>
+<span class="anchor" id="line-94"></span>
+<ul>
+<li>
+<p class="line862" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+eval() 调用<tt>PyEval_EvalCode</tt>（对于bytecode）或<tt>PyRun_StringFlags</tt>（对字符串）<span class="anchor" id="line-95"></span></p>
+</li></ul>
+<p class="line867"><span class="anchor" id="line-96"></span><span class="anchor" id="line-97"></span><span class="anchor" id="line-98"></span><span class="anchor" id="line-99"></span><span class="anchor" id="line-100"></span><span class="anchor" id="line-101"></span><span class="anchor" id="line-102"></span><span class="anchor" id="line-103"></span><span class="anchor" id="line-104"></span><span class="anchor" id="line-105"></span><span class="anchor" id="line-106"></span><span class="anchor" id="line-107"></span><span class="anchor" id="line-108"></span><span class="anchor" id="line-109"></span><span class="anchor" id="line-110"></span><span class="anchor" id="line-111"></span><span class="anchor" id="line-112"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-7"></span>static PyObject *
+<span class="anchor" id="line-2-4"></span>builtin_eval(PyObject *self, PyObject *args)
+<span class="anchor" id="line-3-4"></span>{
+<span class="anchor" id="line-4-3"></span>...
+<span class="anchor" id="line-5-3"></span>    if (PyCode_Check(cmd)) {
+<span class="anchor" id="line-6-3"></span>        return PyEval_EvalCode(cmd, globals, locals);
+<span class="anchor" id="line-7-2"></span>    }
+<span class="anchor" id="line-8-2"></span>
+<span class="anchor" id="line-9-2"></span>    cf.cf_flags = PyCF_SOURCE_IS_UTF8;
+<span class="anchor" id="line-10-1"></span>    str = source_as_string(cmd, &quot;eval&quot;, &quot;string, bytes or code&quot;, &amp;cf);
+<span class="anchor" id="line-11-1"></span>...
+<span class="anchor" id="line-12-1"></span>    (void)PyEval_MergeCompilerFlags(&amp;cf);
+<span class="anchor" id="line-13-1"></span>    result = PyRun_StringFlags(str, Py_eval_input, globals, locals, &amp;cf);
+<span class="anchor" id="line-14-1"></span>    Py_XDECREF(tmp);
+<span class="anchor" id="line-15-1"></span>    return result;
+<span class="anchor" id="line-16-1"></span>}</pre>
+<span class="anchor" id="line-113"></span><span class="anchor" id="line-114"></span>
+<p class="line874">恩，这样一来，总算将C代码和python代码联系上了。<span class="anchor" id="line-115"></span><span class="anchor" id="line-116"></span><span class="anchor" id="line-117"></span></p>
+<h2 id="PyCodeObject" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+PyCodeObject</h2>
+<span class="anchor" id="line-118"></span><span class="anchor" id="line-119"></span>
+<p class="line862">前面提到的 bytecode，具体到源码中，就是PyCodeObject对象了(对应python环境中的code)：<span class="anchor" id="line-120"></span><span class="anchor" id="line-121"></span></p>
+<h3 id="A.2BW5pOSQ-" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+定义</h3>
+<span class="anchor" id="line-122"></span><span class="anchor" id="line-123"></span>
+<p class="line874">先看一下该结构体的定义：<span class="anchor" id="line-124"></span><span class="anchor" id="line-125"></span></p>
+<p class="line867"><span class="anchor" id="line-126"></span><span class="anchor" id="line-127"></span><span class="anchor" id="line-128"></span><span class="anchor" id="line-129"></span><span class="anchor" id="line-130"></span><span class="anchor" id="line-131"></span><span class="anchor" id="line-132"></span><span class="anchor" id="line-133"></span><span class="anchor" id="line-134"></span><span class="anchor" id="line-135"></span><span class="anchor" id="line-136"></span><span class="anchor" id="line-137"></span><span class="anchor" id="line-138"></span><span class="anchor" id="line-139"></span><span class="anchor" id="line-140"></span><span class="anchor" id="line-141"></span><span class="anchor" id="line-142"></span><span class="anchor" id="line-143"></span><span class="anchor" id="line-144"></span><span class="anchor" id="line-145"></span><span class="anchor" id="line-146"></span><span class="anchor" id="line-147"></span><span class="anchor" id="line-148"></span><span class="anchor" id="line-149"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-8"></span>/* Bytecode object */
+<span class="anchor" id="line-2-5"></span>typedef struct {
+<span class="anchor" id="line-3-5"></span>    PyObject_HEAD
+<span class="anchor" id="line-4-4"></span>    int co_argcount;            /* #arguments, except *args */
+<span class="anchor" id="line-5-4"></span>    int co_kwonlyargcount;      /* #keyword only arguments */
+<span class="anchor" id="line-6-4"></span>    int co_nlocals;             /* #local variables */
+<span class="anchor" id="line-7-3"></span>    int co_stacksize;           /* #entries needed for evaluation stack */
+<span class="anchor" id="line-8-3"></span>    int co_flags;               /* CO_..., see below */
+<span class="anchor" id="line-9-3"></span>    PyObject *co_code;          /* instruction opcodes */
+<span class="anchor" id="line-10-2"></span>    PyObject *co_consts;        /* list (constants used) */
+<span class="anchor" id="line-11-2"></span>    PyObject *co_names;         /* list of strings (names used) */
+<span class="anchor" id="line-12-2"></span>    PyObject *co_varnames;      /* tuple of strings (local variable names) */
+<span class="anchor" id="line-13-2"></span>    PyObject *co_freevars;      /* tuple of strings (free variable names) */
+<span class="anchor" id="line-14-2"></span>    PyObject *co_cellvars;      /* tuple of strings (cell variable names) */
+<span class="anchor" id="line-15-2"></span>    /* The rest doesn't count for hash or comparisons */
+<span class="anchor" id="line-16-2"></span>    PyObject *co_filename;      /* unicode (where it was loaded from) */
+<span class="anchor" id="line-17-1"></span>    PyObject *co_name;          /* unicode (name, for reference) */
+<span class="anchor" id="line-18-1"></span>    int co_firstlineno;         /* first source line number */
+<span class="anchor" id="line-19-1"></span>    PyObject *co_lnotab;        /* string (encoding addr&lt;-&gt;lineno mapping) See
+<span class="anchor" id="line-20"></span>                                   Objects/lnotab_notes.txt for details. */
+<span class="anchor" id="line-21"></span>    void *co_zombieframe;     /* for optimization only (see frameobject.c) */
+<span class="anchor" id="line-22"></span>    PyObject *co_weakreflist;   /* to support weakrefs to code objects */
+<span class="anchor" id="line-23"></span>} PyCodeObject;</pre>
+<span class="anchor" id="line-150"></span><span class="anchor" id="line-151"></span>
+<ul>
+<li>各个成员什么含义？源码中有解释了，下面我们直接看看：如何在python中查看这些成员<span class="anchor" id="line-152"></span><span class="anchor" id="line-153"></span></li></ul>
+<h3 id="A.2BZ.2BV3Cw-code.2BdoRiEFRY-" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+查看code的成员</h3>
+<span class="anchor" id="line-154"></span>
+<p class="line874">Python提供了简单的封装，于是，我们可以直接查看这些成员。例子：<span class="anchor" id="line-155"></span><span class="anchor" id="line-156"></span></p>
+<p class="line867"><span class="anchor" id="line-157"></span><span class="anchor" id="line-158"></span><span class="anchor" id="line-159"></span><span class="anchor" id="line-160"></span><span class="anchor" id="line-161"></span><span class="anchor" id="line-162"></span><span class="anchor" id="line-163"></span><span class="anchor" id="line-164"></span><span class="anchor" id="line-165"></span><span class="anchor" id="line-166"></span><span class="anchor" id="line-167"></span><span class="anchor" id="line-168"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-9"></span>&gt;&gt;&gt; c = compile(&quot;1&#43;2&quot;, &quot;test.py&quot;, &quot;single&quot;)
+<span class="anchor" id="line-2-6"></span>&gt;&gt;&gt; c.co_argcount
+<span class="anchor" id="line-3-6"></span>0
+<span class="anchor" id="line-4-5"></span>&gt;&gt;&gt; c.co_code
+<span class="anchor" id="line-5-5"></span>b'd\x03\x00Fd\x02\x00S'
+<span class="anchor" id="line-6-5"></span>&gt;&gt;&gt; c.co_consts
+<span class="anchor" id="line-7-4"></span>(1, 2, None, 3)
+<span class="anchor" id="line-8-4"></span>&gt;&gt;&gt; c.co_name
+<span class="anchor" id="line-9-4"></span>'&lt;module&gt;'
+<span class="anchor" id="line-10-3"></span>&gt;&gt;&gt; c.co_filename
+<span class="anchor" id="line-11-3"></span>'test.py'</pre>
+<span class="anchor" id="line-169"></span><span class="anchor" id="line-170"></span>
+<p class="line862">其中 co_code 就是字节码了：<tt>d\x03\x00Fd\x02\x00S</tt><span class="anchor" id="line-171"></span><span class="anchor" id="line-172"></span></p>
+<p class="line874">那么如何理解这些代码？？<span class="anchor" id="line-173"></span><span class="anchor" id="line-174"></span></p>
+<h3 id="A.2BW1eCgngB-" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+字节码</h3>
+<span class="anchor" id="line-175"></span>
+<p class="line862">co_code 写成10进制：<tt>100&nbsp;3&nbsp;0&nbsp;70&nbsp;100&nbsp;2&nbsp;0&nbsp;83</tt><span class="anchor" id="line-176"></span><span class="anchor" id="line-177"></span></p>
+<div>
+<table style="margin-top:0.5em; margin-right:0px; margin-bottom:0px; margin-left:0.5em; border-collapse:collapse">
+<tbody>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+100</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+指令码： LOAD_CONST</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-178"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+3</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+co_consts中的第3个常数</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-179"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+0</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+&nbsp;</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-180"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+70</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+指令码： PRINT_EXPR</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-181"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+100</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+指令码： LOAD_CONST</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-182"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+2</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+co_consts中的第2个常数</p>
+</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-183"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+0</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+&nbsp;</td>
+</tr>
+<tr>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<span class="anchor" id="line-184"></span>
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+83</p>
+</td>
+<td style="padding-top:0.25em; padding-right:0.5em; padding-bottom:0.25em; padding-left:0.5em; border-top-width:1px; border-right-width:1px; border-bottom-width:1px; border-left-width:1px; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(4,115,7); border-right-color:rgb(4,115,7); border-bottom-color:rgb(4,115,7); border-left-color:rgb(4,115,7)">
+<p class="line862" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px">
+指令码： RETURN_VALUE</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-185"></span><span class="anchor" id="line-186"></span>
+<p class="line874">指令码定义在文件 Include/opcode.h 中。<span class="anchor" id="line-187"></span><span class="anchor" id="line-188"></span></p>
+<p class="line874">不过这样阅读指令码真的很难受，幸好，python提供了 dis 模块<span class="anchor" id="line-189"></span><span class="anchor" id="line-190"></span></p>
+<h3 id="dis" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+dis</h3>
+<span class="anchor" id="line-191"></span>
+<p class="line874">用它来看看前面的例子<span class="anchor" id="line-192"></span><span class="anchor" id="line-193"></span><span class="anchor" id="line-194"></span><span class="anchor" id="line-195"></span><span class="anchor" id="line-196"></span><span class="anchor" id="line-197"></span><span class="anchor" id="line-198"></span><span class="anchor" id="line-199"></span><span class="anchor" id="line-200"></span></p>
+<pre style="padding-top:0.5em; padding-right:0.5em; padding-bottom:0.5em; padding-left:0.5em; font-family:courier,monospace; border-top-width:1pt; border-right-width:1pt; border-bottom-width:1pt; border-left-width:1pt; border-top-style:solid; border-right-style:solid; border-bottom-style:solid; border-left-style:solid; border-top-color:rgb(192,192,192); border-right-color:rgb(192,192,192); border-bottom-color:rgb(192,192,192); border-left-color:rgb(192,192,192); background-color:rgb(240,236,230); white-space:pre-wrap; word-wrap:break-word"><span class="anchor" id="line-1-10"></span>&gt;&gt;&gt; c = compile(&quot;1&#43;2&quot;, &quot;test.py&quot;, &quot;single&quot;)
+<span class="anchor" id="line-2-7"></span>&gt;&gt;&gt; import dis
+<span class="anchor" id="line-3-7"></span>&gt;&gt;&gt; dis.dis(c)
+<span class="anchor" id="line-4-6"></span>  1           0 LOAD_CONST               3 (3) 
+<span class="anchor" id="line-5-6"></span>              3 PRINT_EXPR           
+<span class="anchor" id="line-6-6"></span>              4 LOAD_CONST               2 (None) 
+<span class="anchor" id="line-7-5"></span>              7 RETURN_VALUE </pre>
+<span class="anchor" id="line-201"></span><span class="anchor" id="line-202"></span>
+<p class="line874">恩，一目了然。最开始的那个1是行号，指令码前面的数字是它在co_code中的索引。<span class="anchor" id="line-203"></span><span class="anchor" id="line-204"></span></p>
+<p class="line874">恩，dis 是很有用的东西，不过偶还没学会怎么利用它。<span class="anchor" id="line-205"></span><span class="anchor" id="line-206"></span></p>
+<h2 id="A.2BU8KAAw-" style="padding-top:0px; padding-right:0px; padding-bottom:0.3em; padding-left:0px; border-bottom-width:3px; border-bottom-style:solid; border-bottom-color:rgb(4,115,7)">
+参考</h2>
+<span class="anchor" id="line-207"></span>
+<ul>
+<li>
+<p class="line891" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+<a class="http" href="http://docs.python.org/py3k/glossary.html#term-bytecode" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">http://docs.python.org/py3k/glossary.html#term-bytecode</a><span class="anchor" id="line-208"></span></p>
+</li><li>
+<p class="line891" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+<a class="http" href="http://docs.python.org/py3k/library/functions.html#compile" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">http://docs.python.org/py3k/library/functions.html#compile</a><span class="anchor" id="line-209"></span></p>
+</li><li>
+<p class="line891" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+<a class="http" href="http://docs.python.org/py3k/library/dis.html#bytecodes" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">http://docs.python.org/py3k/library/dis.html#bytecodes</a><span class="anchor" id="line-210"></span></p>
+</li><li>
+<p class="line891" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+<a class="http" href="http://docs.python.org/py3k/library/code.html#module-code" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">http://docs.python.org/py3k/library/code.html#module-code</a><span class="anchor" id="line-211"></span></p>
+</li><li>
+<p class="line891" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+<a class="http" href="http://docs.python.org/py3k/library/stdtypes.html#code-objects" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">http://docs.python.org/py3k/library/stdtypes.html#code-objects</a><span class="anchor" id="line-212"></span></p>
+</li><li>
+<p class="line891" style="margin-top:0.25em; margin-right:0px; margin-bottom:0.25em; margin-left:0px">
+<a class="http" href="http://www.python-course.eu/execute_script.php" style="color:rgb(4,115,7); border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial">http://www.python-course.eu/execute_script.php</a></p>
+</li></ul>
+<br>
+    
+        <div  style="padding-top:20px">         
+            <p  style="font-size:12px;" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox" style="float: right;">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   <link rel="stylesheet" href="http://static.blog.csdn.net/css/blog_detail.css" />
+
+    
+<!--172.16.140.11-->
+<ul class="article_next_prev">
+            <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/dbzhang800/article/details/6765117';">上一篇</span><a href="/dbzhang800/article/details/6765117" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">qmake 乱乱乱谈(四)</a></li>
+            <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/dbzhang800/article/details/6766758';">下一篇</span><a href="/dbzhang800/article/details/6766758" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">C++小问题3则</a></li>
+</ul>
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+ 
+
+        <div id="digg" ArticleId="6766284">
+            <dl id="btnDigg" class="digg digg_disable">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+            <dl id="btnBury" class="digg digg_disable">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>
+            </dl>
+        </div>
+      
+</div>
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/dbzhang800/svc/GetSuggestContent/6766284",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+</style>
+
+<dl class="blog-ass-articl" id="res-relatived" > 
+     <dt><span>猜你在找</span></dt>    
+
+
+   
+
+
+    <div id="adCollege" style="width: 42%;float: left;"> 
+        <script src="http://csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script> 
+        <script type="text/javascript">
+            csdn.position.showEdu({
+                sourceType: "blog",
+                searchType: "detail",
+                searchKey: "6766284",
+                username: "",
+                recordcount: "5",
+                containerId: "adCollege" //容器DIV的id。 
+            });
+        </script> 
+    </div>  
+
+    
+     <div id="res"  data-mod="popu_36"  class="tracking-ad" style="width: 42%;float: left;margin-right: 30px;"></div>
+   
+</dl>
+
+<div id="job_blog_reco">
+<script src="http://c.csdnimg.cn/jobreco/job_reco.js" type="text/javascript"></script>
+   
+     <script type="text/javascript">
+         csdn.position.show({
+         sourceType: "blog",
+         tplType: "blogDetail",
+         searchType: "detail",
+         searchKey: "6766284",
+             username: "",
+         containerId: "job_blog_reco"
+        }); 
+    </script>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        setTimeout(function () {
+            var searchtitletags = '[Python源码学习]之bytecode' + ',' + $("#tags").html();
+            searchService({
+                index: 'blog',
+                query: searchtitletags,
+                from: 5,
+                size: 5,
+                appendTo: '#res',
+                url: 'recommend',
+                his: 2,
+                client: "blog_cf_enhance",
+                tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+            });
+        }, 500);
+    });    
+
+ </script>   
+
+    <div id="ad_cen">
+   
+          <script type="text/javascript">
+              new Ad(4, 'ad_cen');
+          </script>
+    </div>
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '6766284';
+    var commentscount = 0;
+    var islock = false
+</script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/comment.js"></script>
+    <div id="ad_bot">
+    </div>
+    <script type="text/javascript">
+        setTimeout(function(){
+            new Ad(5, 'ad_bot');
+        },500);  
+    </script>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="tag_list" style="display:none"></div>
+  <script  language="javascript" type='text/javascript'>     
+      $(function(){
+              setTimeout(function(){
+                  $.get("/dbzhang800/svc/GetTagContent",function(data){
+                      $(".tag_list").html(data).show();
+                  });     
+              });
+          },500);                       
+ </script> 
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });
+        },200);  
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }    
+
+</script>
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/dbzhang800" target="_blank">
+    <img src="http://avatar.csdn.net/5/9/3/1_dbzhang800.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/dbzhang800" class="user_name" target="_blank">dbzhang800</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=dbzhang800','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                       <div class="ico_expert"  onclick="javascript:location='http://blog.csdn.net/experts/rule.html'" title="CSDN认证专家" style="cursor:pointer;width:60px;height:60px;background:url('http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/bokezhuanjiamiddle.png') no-repeat" ></div>
+                <div id="bms_box">
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>1227728次</span></li>
+    <li>积分：<span>14141</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog7.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：14141 </div>
+        </span>  </li>
+    <li>排名：<span>第352名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>181篇</span></li>
+    <li>转载：<span>0篇</span></li>
+    <li>译文：<span>8篇</span></li>
+    <li>评论：<span>844条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+<div id="custom_column_8627456" class="panel">
+<ul class="panel_head"><span>公告</span></ul>
+<ul class="panel_body">
+
+<p>本blog在IE浏览器下可能会&#26684;式错乱，请考虑<font color="blue">非IE内核</font>浏览器。</p>
+<p>在多篇blog中，<font color="red">反斜杠\</font>被CSDN自动替换成了<font color="red">斜杠/</font>，请注意识别，谢谢。
+</p>
+<p><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/"><img alt="知识共享许可协议" src="http://hi.csdn.net/attachment/201110/11/519051_131833564508ZW.png" style="border-width:0"></a><br>
+本Blog中所有作品(文中额外注明版权的除外)均采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/cn/">知识共享署名-非商业性使用-相同方式共享 2.5</a>进行许可。
+</p>
+
+</ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/dbzhang800/article/category/759349" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C/C++</a><span>(53)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/759347" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">PyQt4/PySide</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/759348" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Python</a><span>(22)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/759342" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Qt</a><span>(122)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/821916" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">QTBUG</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/807954" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">tools</a><span>(33)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/865869" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Python源码学习</a><span>(11)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/866220" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++0x</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/866307" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Qt5</a><span>(17)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/890158" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Python Issue</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/892402" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">git</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/894128" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">cmake/qmake</a><span>(17)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/894136" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">QWidget漫谈</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/894787" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">latex</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/901594" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">javascript</a><span>(3)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/916546" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Log4Qt</a><span>(3)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/916973" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">linux</a><span>(4)</span>
+                </li>
+                 <li>
+                    <a href="/dbzhang800/article/category/1064697" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C#/.NET</a><span>(9)</span>
+                </li>
+</ul>
+</div>
+
+<div id="custom_column_1531029" class="panel">
+<ul class="panel_head"><span>Qt 博客链接</span></ul>
+<ul class="panel_body">
+<ul>
+<li><a href="http://www.qiliang.net/blog/" target="_blank">
+齐亮的博客
+</a></li>
+<li><a href="http://hi.baidu.com/xchinux" target="_blank">
+白建平的博客
+</a></li>
+<li><a href="http://www.cuteqt.com/blog/?author=4" target="_blank">
+白净的博客
+</a></li>
+<li><a href="http://blog.csdn.net/qter_wd007" target="_blank">
+吴迪的博客
+</a></li>
+<li><a href="http://dbzhang800.blogspot.com" target="_blank">
+我的blogspot
+</a></li>
+<li><a href="http://hi.baidu.com/cyclone" target="_blank">
+我的百度博客
+</a></li>
+</ul>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/dbzhang800/article/month/2013/07">2013年07月</a><span>(1)</span></li><li><a href="/dbzhang800/article/month/2012/11">2012年11月</a><span>(1)</span></li><li><a href="/dbzhang800/article/month/2012/05">2012年05月</a><span>(2)</span></li><li><a href="/dbzhang800/article/month/2012/04">2012年04月</a><span>(1)</span></li><li><a href="/dbzhang800/article/month/2012/03">2012年03月</a><span>(4)</span></li><li><a href="/dbzhang800/article/month/2012/02">2012年02月</a><span>(1)</span></li><li><a href="/dbzhang800/article/month/2012/01">2012年01月</a><span>(9)</span></li><li><a href="/dbzhang800/article/month/2011/12">2011年12月</a><span>(4)</span></li><li><a href="/dbzhang800/article/month/2011/11">2011年11月</a><span>(13)</span></li><li><a href="/dbzhang800/article/month/2011/10">2011年10月</a><span>(23)</span></li><li><a href="/dbzhang800/article/month/2011/09">2011年09月</a><span>(24)</span></li><li><a href="/dbzhang800/article/month/2011/08">2011年08月</a><span>(31)</span></li><li><a href="/dbzhang800/article/month/2011/07">2011年07月</a><span>(9)</span></li><li><a href="/dbzhang800/article/month/2011/06">2011年06月</a><span>(15)</span></li><li><a href="/dbzhang800/article/month/2011/05">2011年05月</a><span>(23)</span></li><li><a href="/dbzhang800/article/month/2011/04">2011年04月</a><span>(28)</span></li>
+</div>
+</ul>
+</div>
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/dbzhang800/article/details/7540905#comments">QString乱谈(2)</a>
+    <p style="margin:0px;"><a href="/mingxin505" class="user_name">mingxin505</a>:
+群主,非常感谢你的劳动成果.
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6300025#comments">从 Qt 的 delete 说开来</a>
+    <p style="margin:0px;"><a href="/muggle222" class="user_name">muggle222</a>:
+控件1包含的layout包含的控件2，那么控件2会不会被自动释放？
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6300025#comments">从 Qt 的 delete 说开来</a>
+    <p style="margin:0px;"><a href="/z55716368" class="user_name">z55716368</a>:
+好帖子 很不错！！！
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6300025#comments">从 Qt 的 delete 说开来</a>
+    <p style="margin:0px;"><a href="/IT_HY" class="user_name">IT_HY</a>:
+不错的文章学习了
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6376422#comments">用ISO C++实现自己的信号槽(Qt另类学习)</a>
+    <p style="margin:0px;"><a href="/baiyang0226" class="user_name">baiyang0226</a>:
+牛逼
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6547196#comments">信号与槽的新语法(Qt5)</a>
+    <p style="margin:0px;"><a href="/wsyzyrxp1" class="user_name">wsyzyrxp1</a>:
+写得好啊 遇到重载的信号不知道要怎么写 ，看了文章就明白了
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6314073#comments">cmake 学习笔记(一)</a>
+    <p style="margin:0px;"><a href="/Hemeng_918" class="user_name">Hemeng_918</a>:
+例子三中的CMakelists.txt是错误的，库文件路径未指定
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6680563#comments">Qt 之 WindowFlags 引发的有趣问题一则</a>
+    <p style="margin:0px;"><a href="/u010647162" class="user_name">u010647162</a>:
+很详细！谢谢分享~
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6335818#comments">QFtp 与中文问题</a>
+    <p style="margin:0px;"><a href="/BBOOT" class="user_name">BBOOT</a>:
+您好，我在英文版的红帽6.4Linux(系统编码：utf-8)中的命令行界面 使用ftp命令向Win...
+    </p>
+    </li>
+    <li>
+   
+         <a href="/dbzhang800/article/details/6343838#comments">浅谈 qmake 之 shadow build</a>
+    <p style="margin:0px;"><a href="/liyidong2014" class="user_name">liyidong2014</a>:
+可以转载吗？博主分析得不错~
+    </p>
+    </li>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/dbzhang800/article/details/6314073" title="cmake 学习笔记(一)">cmake 学习笔记(一)</a><span>(50992)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6554104" title="Qt 线程基础(QThread、QtConcurrent等)">Qt 线程基础(QThread、QtConcurrent等)</a><span>(30527)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/7325698" title="QTextCodec中的setCodecForTr等终于消失了 (Qt5)">QTextCodec中的setCodecForTr等终于消失了 (Qt5)</a><span>(24963)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6348432" title="浅谈 qmake 之 pro、pri、prf、prl文件">浅谈 qmake 之 pro、pri、prf、prl文件</a><span>(22004)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6300025" title="从 Qt 的 delete 说开来">从 Qt 的 delete 说开来</a><span>(20508)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6363165" title="从 相对路径 说开来(从C++到Qt)">从 相对路径 说开来(从C++到Qt)</a><span>(20406)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6876451" title="从QProcess说开来(一)">从QProcess说开来(一)</a><span>(18910)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6460229" title="qDebug 学习小结">qDebug 学习小结</a><span>(18424)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/7542672" title="QString 乱谈(3)-Qt5与中文">QString 乱谈(3)-Qt5与中文</a><span>(17349)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6403285" title="Qt 智能指针学习">Qt 智能指针学习</a><span>(17216)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/dbzhang800/article/details/6376422" title="用ISO C++实现自己的信号槽(Qt另类学习)">用ISO C++实现自己的信号槽(Qt另类学习)</a><span>(58)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6300025" title="从 Qt 的 delete 说开来">从 Qt 的 delete 说开来</a><span>(48)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6314073" title="cmake 学习笔记(一)">cmake 学习笔记(一)</a><span>(40)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6300789" title="1+1=2的 blog 文章索引">1+1=2的 blog 文章索引</a><span>(37)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6363165" title="从 相对路径 说开来(从C++到Qt)">从 相对路径 说开来(从C++到Qt)</a><span>(32)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/7325698" title="QTextCodec中的setCodecForTr等终于消失了 (Qt5)">QTextCodec中的setCodecForTr等终于消失了 (Qt5)</a><span>(27)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/7540905" title="QString乱谈(2)">QString乱谈(2)</a><span>(21)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6381636" title="Qt编码风格">Qt编码风格</a><span>(19)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6334852" title="Qt国际化（源码含中文时）的点滴分析">Qt国际化（源码含中文时）的点滴分析</a><span>(18)</span>
+</li>
+<li>
+<a href="/dbzhang800/article/details/6422188" title="QMainWindow上下文菜单内存泄露(QTBUG)">QMainWindow上下文菜单内存泄露(QTBUG)</a><span>(18)</span>
+</li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+ </div>   
+            <div class="clear">
+            </div>
+        </div>
+        
+
+<script type="text/javascript" src="http://c.csdnimg.cn/rabbit/cnick/cnick.js"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/newblog.min.js"></script>
+
+
+<script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=929216"></script>
+<script type="text/javascript" src="http://static.blog.csdn.net/scripts/JavaScript1.js"></script>
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script>
+<script type="text/javascript" src="http://www.csdn.net/ui/scripts/Csdn/counter.js"></script>
+<script type="text/javascript" src="http://ad.csdn.net/scripts/ad-blog.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a>"
+                    + "<a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+    });
+</script>
+
+
+
+
+    </div>
+      <!--new top-->
+    
+    <script id="csdn-toolbar-id" btnId="header_notice_num" wrapId="note1" count="5" subCount="5" type="text/javascript" src="http://static.csdn.net/public/common/toolbar/js/toolbar.js"></script>     <!--new top-->
+   
+    <link href="http://c.csdnimg.cn/comm_ask/css/ask_float_block.css" type="text/css" rel="stylesheet" />
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/wmd.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/showdown.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/libs/prettify.js'></script>
+    <script language='JavaScript' type='text/javascript' src='http://c.csdnimg.cn/comm_ask/js/apps/ask_float_block.js'></script>
+   
+</body>
+</html>   
+ 

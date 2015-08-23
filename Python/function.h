@@ -32,6 +32,15 @@ typedef PyObject *(*allocfunc)(struct _typeobject *, Py_ssize_t);
 /********************************
  *******PyObject Functions*******
  ********************************/
+PyObject * PyObject_Init(PyObject *op, PyTypeObject *tp) {
+	if (op == NULL)
+		return PyErr_NoMemory();
+	/* Any changes should be reflected in PyObject_INIT (objimpl.h) */
+	op->ob_type = tp;
+	_Py_NewReference(op);
+	return op;
+}
+
 PyObject * PyObject_GenericGetAttr(PyObject *obj, PyObject *name) {
 	PyTypeObject *tp = obj->ob_type;
 	PyObject *descr = NULL;
@@ -353,4 +362,159 @@ int _PyInt_Init(void) {
 	}
 #endif
 	return 1;
+}
+
+/********************************
+ ****PyStringObject Functions****
+ ********************************/
+PyObject * PyString_FromString(const char *str) {
+	register size_t size;
+	register PyStringObject *op;
+
+	assert(str != NULL);
+	size = strlen(str);
+	if (size > PY_SSIZE_T_MAX) {
+		PyErr_SetString(PyExc_OverflowError,
+			"string is too long for a Python string");
+		return NULL;
+	}
+	if (size == 0 && (op = nullstring) != NULL) {
+#ifdef COUNT_ALLOCS
+		null_strings++;
+#endif
+		Py_INCREF(op);
+		return (PyObject *)op;
+	}
+	if (size == 1 && (op = characters[*str & UCHAR_MAX]) != NULL) {
+#ifdef COUNT_ALLOCS
+		one_strings++;
+#endif
+		Py_INCREF(op);
+		return (PyObject *)op;
+	}
+
+	/* Inline PyObject_NewVar */
+	op = (PyStringObject *)PyObject_MALLOC(sizeof(PyStringObject) + size);
+	if (op == NULL)
+		return PyErr_NoMemory();
+	PyObject_INIT_VAR(op, &PyString_Type, size);
+	op->ob_shash = -1;
+	op->ob_sstate = SSTATE_NOT_INTERNED;
+	Py_MEMCPY(op->ob_sval, str, size+1);
+	/* share short strings */
+	if (size == 0) {
+		PyObject *t = (PyObject *)op;
+		PyString_InternInPlace(&t);
+		op = (PyStringObject *)t;
+		nullstring = op;
+		Py_INCREF(op);
+	} else if (size == 1) {
+		PyObject *t = (PyObject *)op;
+		PyString_InternInPlace(&t);
+		op = (PyStringObject *)t;
+		characters[*str & UCHAR_MAX] = op;
+		Py_INCREF(op);
+	}
+	return (PyObject *) op;
+}
+
+PyObject *
+PyString_FromStringAndSize(const char *str, Py_ssize_t size)
+{
+	register PyStringObject *op;
+	assert(size >= 0);
+	if (size == 0 && (op = nullstring) != NULL) {
+#ifdef COUNT_ALLOCS
+		null_strings++;
+#endif
+		Py_INCREF(op);
+		return (PyObject *)op;
+	}
+	if (size == 1 && str != NULL &&
+	    (op = characters[*str & UCHAR_MAX]) != NULL)
+	{
+#ifdef COUNT_ALLOCS
+		one_strings++;
+#endif
+		Py_INCREF(op);
+		return (PyObject *)op;
+	}
+
+	/* Inline PyObject_NewVar */
+	op = (PyStringObject *)PyObject_MALLOC(sizeof(PyStringObject) + size);
+	if (op == NULL)
+		return PyErr_NoMemory();
+	PyObject_INIT_VAR(op, &PyString_Type, size);
+	op->ob_shash = -1;
+	op->ob_sstate = SSTATE_NOT_INTERNED;
+	if (str != NULL)
+		Py_MEMCPY(op->ob_sval, str, size);
+	op->ob_sval[size] = '\0';
+	/* share short strings */
+	if (size == 0) {
+		PyObject *t = (PyObject *)op;
+		PyString_InternInPlace(&t);
+		op = (PyStringObject *)t;
+		nullstring = op;
+		Py_INCREF(op);
+	} else if (size == 1 && str != NULL) {
+		PyObject *t = (PyObject *)op;
+		PyString_InternInPlace(&t);
+		op = (PyStringObject *)t;
+		characters[*str & UCHAR_MAX] = op;
+		Py_INCREF(op);
+	}
+	return (PyObject *) op;
+}
+
+void PyString_InternInPlace(PyObject **p) {
+	register PyStringObject *s = (PyStringObject *)(*p);
+	PyObject *t;
+	if (s == NULL || !PyString_Check(s))
+		Py_FatalError("PyString_InternInPlace: strings only please!");
+	/* If it's a string subclass, we don't really know what putting
+	   it in the interned dict might do. */
+	if (!PyString_CheckExact(s))
+		return;
+	if (PyString_CHECK_INTERNED(s))
+		return;
+	if (interned == NULL) {
+		interned = PyDict_New();
+		if (interned == NULL) {
+			PyErr_Clear(); /* Don't leave an exception */
+			return;
+		}
+	}
+	t = PyDict_GetItem(interned, (PyObject *)s);
+	if (t) {
+		Py_INCREF(t);
+		Py_DECREF(*p);
+		*p = t;
+		return;
+	}
+
+	if (PyDict_SetItem(interned, (PyObject *)s, (PyObject *)s) < 0) {
+		PyErr_Clear();
+		return;
+	}
+	/* The two references in interned are not counted by refcnt.
+	   The string deallocator will take care of this */
+	s->ob_refcnt -= 2;
+	PyString_CHECK_INTERNED(s) = SSTATE_INTERNED_MORTAL;
+}
+
+PyObject * PyString_InternFromString(const char *cp) {
+	PyObject *s = PyString_FromString(cp);
+	if (s == NULL)
+		return NULL;
+	PyString_InternInPlace(&s);
+	return s;
+}
+
+void PyString_InternImmortal(PyObject **p) {
+	PyString_InternInPlace(p);
+	if (PyString_CHECK_INTERNED(*p) != SSTATE_INTERNED_IMMORTAL) {
+		PyString_CHECK_INTERNED(*p) = SSTATE_INTERNED_IMMORTAL;
+		Py_INCREF(*p);
+	}
 }

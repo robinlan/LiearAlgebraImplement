@@ -119,3 +119,10 @@
 #define BLOCK_SIZE	1000	
 #define BHEAD_SIZE	8	
 #define N_INTOBJECTS	((BLOCK_SIZE - BHEAD_SIZE) / sizeof(PyIntObject))
+
+/***************************************
+ ****PyIntObject-related Definitions****
+ ***************************************/
+ 
+ /* This value depends on platform, this one is from Win32 */
+ #define UCHAR_MAX   0xff
